@@ -1,0 +1,2 @@
+
+        cv.imshow("Negro", blackDetection)
