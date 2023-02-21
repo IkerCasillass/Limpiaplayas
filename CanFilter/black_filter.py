@@ -30,11 +30,8 @@ def kmeans(image):
     # Mostramos la imagen segmentada resultante.
     return segmented_image
 
-def on_trackbar(val):
-    alpha = val / slider_Max
-    beta = ( 1.0 - alpha )
-    dst = cv.addWeighted(frame, alpha, frame, beta, 0.0)
-    cv.imshow("Frame", dst)
+def nothing(val):
+    pass
 
 vc = cv.VideoCapture(0)
 
@@ -42,10 +39,10 @@ Black = np.array([0, 0, 0], np.uint8)
 Black1 = np.array([0, 0, 30], np.uint8)
 
 #Creando Trackbar
-slider_Max = 100
-cv.namedWindow("Frame")
+slider_Max = 125
+cv.namedWindow("frame")
 trackbar_name = 'Black'
-cv.createTrackbar(trackbar_name, "Frame" , 0, slider_Max, on_trackbar)
+cv.createTrackbar(trackbar_name, "frame" , 0, slider_Max, nothing)
 
 
 while True:
@@ -55,16 +52,16 @@ while True:
         
         blackMask = cv.inRange(frameHSV, Black, Black1)
 
-        on_trackbar(0) # Iniciar trackbar
+        nothing(0) # Iniciar trackbar
 
         #B = cv.getTrackbarPos('Black', 'Frame')
         #maxBlackValue = B
 
-        maxBlackValue = int(cv.getTrackbarPos('Black', 'Frame')) #Utilizar el valor decicido en la trackbar
+        maxBlackValue = int(cv.getTrackbarPos('Black', 'frame')) #Utilizar el valor decicido en la trackbar
 
         gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
         ret, blackDetection = cv.threshold(gray, maxBlackValue, 255, cv.THRESH_BINARY_INV) #Detectar valores menores a 20
-        
+        print(maxBlackValue)
         visualizeBlues = cv.bitwise_and(frame, frame, mask=blackMask)
 
         kernel = np.ones((3, 3), np.uint8)
