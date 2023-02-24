@@ -12,7 +12,7 @@ def detectBlobs(image, hsv_min, hsv_max):
     params.maxThreshold = 150
 
     # Change distance between blobs in pixels
-    params.minDistBetweenBlobs = 10
+    params.minDistBetweenBlobs = 20
 
     # Filter by Color. (0-255 in binary scale)
     params.filterByColor = True
@@ -21,7 +21,7 @@ def detectBlobs(image, hsv_min, hsv_max):
     # Filter by Area. (meassured in density pixels)
     params.filterByArea = True
     params.minArea = 250
-    params.maxArea = 5000
+    #params.maxArea = 5000
 
     # Filter by Circularity (values between 0 - 1)
     params.filterByCircularity = False
@@ -43,7 +43,6 @@ def detectBlobs(image, hsv_min, hsv_max):
 
     #Definir Kernel para operaciones morfologicas (open - close)
     kernel = np.ones((5, 5), np.uint8)
-
 
     blurredframe = cv2.GaussianBlur(image, (5, 5), 0)
     hsv_img = cv2.cvtColor(blurredframe, cv2.COLOR_BGR2HSV)
