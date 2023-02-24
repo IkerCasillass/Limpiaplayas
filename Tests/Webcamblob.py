@@ -19,8 +19,8 @@ def detectBlobs(image, hsv_min, hsv_max):
     params.blobColor = 0
 
     # Filter by Area. (meassured in density pixels)
-    params.filterByArea = False
-    params.minArea = 10
+    params.filterByArea = True
+    params.minArea = 250
     params.maxArea = 5000
 
     # Filter by Circularity (values between 0 - 1)
@@ -44,16 +44,20 @@ def detectBlobs(image, hsv_min, hsv_max):
     #Definir Kernel para operaciones morfologicas (open - close)
     kernel = np.ones((5, 5), np.uint8)
 
-    hsv_img = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+
+    blurredframe = cv2.GaussianBlur(image, (5, 5), 0)
+    hsv_img = cv2.cvtColor(blurredframe, cv2.COLOR_BGR2HSV)
 
     mask = cv2.inRange(hsv_img, hsv_min, hsv_max)
     mask = cv2.dilate(mask, None, iterations=1)
     mask = cv2.erode(mask, None, iterations=1)
 
     mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel, iterations=1)
+    mask = cv2.medianBlur(mask, 9) #Applying blur to minimize noise
 
     # Detect blobs.
     reversemask = 255 - mask
+
     keypoints = detector.detect(reversemask)
 
     # Draw detected blobs as red circles.
@@ -72,11 +76,9 @@ def detectBlobs(image, hsv_min, hsv_max):
     
     pass
 
-
 #Color range for detection!!!!!
 hsv_min = (0, 0, 0)
 hsv_max = (180, 255, 30)
-
 
 #Webcam video
 vc = cv2.VideoCapture(0)
@@ -86,10 +88,7 @@ while True:
     ret, frame = vc.read()
     if ret == True:
 
-        
         detectBlobs(frame, hsv_min, hsv_max)
-
-
 
         if cv2.waitKey(50) == 27:
             break
