@@ -12,15 +12,15 @@ This repository contains code for a Beach Cleaning Robot for the Mexican Robotic
 
 ### Week 2 (march 27 - apr 2)
 - [ ] **Evasion strategy (what if the sea is diagonal to the bot?)**
-  - [x] Distance to sea
+  - [ ] Distance to sea
   - [ ] Define bottom edge of sea
 
 
 ### Week 3 (apr 3 - apr 9)
 - [ ] **Deposit()**
-  - [x] Redfilter
-  - [x] Decision making
-  - [x] Testing
+  - [ ] Redfilter
+  - [ ] Decision making
+  - [ ] Testing
 
 ### Week 4 (apr 10 - apr 16)
 - [ ] **Evading obstacles**
