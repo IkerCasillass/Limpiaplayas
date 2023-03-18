@@ -73,7 +73,18 @@ def detectBlobs(image, hsv_min, hsv_max):
     cv2.imshow("Keypoints", im_with_keypoints)
     cv2.imshow('Inverted mask', reversemask)
     
-    pass
+    return keypoints
+
+def getBlobPosition(frame, keypoint):
+    rows = float(frame.shape[0])
+    cols = float(frame.shape[1])
+    center_x    = 0.5*cols
+    center_y    = 0.5*rows
+    # print(center_x)
+    x = (keyPoint.pt[0] - center_x)/(center_x)
+    y = (keyPoint.pt[1] - center_y)/(center_y)
+    return(x,y)
+
 
 #Color range for detection!!!!!
 hsv_min = (0, 0, 0)
@@ -87,7 +98,20 @@ while True:
     ret, frame = vc.read()
     if ret == True:
 
-        detectBlobs(frame, hsv_min, hsv_max)
+        keypoints = detectBlobs(frame, hsv_min, hsv_max)
+
+        for i, keyPoint in enumerate(keypoints):
+                
+                #--- Here you can implement some tracking algorithm to filter multiple detections
+                #--- We are simply getting the first result
+                x = keyPoint.pt[0]
+                y = keyPoint.pt[1]
+                s = keyPoint.size
+                print ("kp %d: s = %3d   x = %3d  y= %3d"%(i, s, x, y))
+
+
+                #--- Find x and y position in camera adimensional frame
+                x, y = getBlobPosition(frame, keyPoint)
 
         if cv2.waitKey(50) == 27:
             break

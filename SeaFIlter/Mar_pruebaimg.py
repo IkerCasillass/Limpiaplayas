@@ -1,7 +1,7 @@
 import cv2 as cv
 import numpy as np
 
-src = r"C:\Users\ikerc\OneDrive\Escritorio\Vision_RT\FiltroMar\Prueba_playa.jpg" #Raw string con ruta de la imagen
+src = r"C:\Users\ikerc\OneDrive\Escritorio\Vision_RT\SeaFIlter\Prueba_playa.jpg" #Raw string con ruta de la imagen
 img = cv.imread(src, 1) #Leer imagen
 
 HSVimg = cv.cvtColor(img, cv.COLOR_BGR2HSV) #BGR a HSV
@@ -29,9 +29,9 @@ closing = cv.morphologyEx(blueMask2, cv.MORPH_CLOSE, kernel)
 while True:
 
     cv.imshow('IMAGEN', img) #Imagen original
-    cv.imshow('Mar', blueMask2) #Mar filtrado
+    #cv.imshow('Mar', blueMask2) #Mar filtrado
     cv.imshow("Opening", opening)
-    cv.imshow("Closing", closing)
+    #cv.imshow("Closing", closing)
     #cv.imshow('ALLBLUES', visualizeBlues) #Visualizando azules
 
     if cv.waitKey(50) == 27:
