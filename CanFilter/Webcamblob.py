@@ -1,6 +1,7 @@
 # Standard imports
 import cv2
 import numpy as np
+import math
 
 def detectBlobs(image, hsv_min, hsv_max):
 
@@ -20,8 +21,8 @@ def detectBlobs(image, hsv_min, hsv_max):
 
     # Filter by Area. (meassured in density pixels)
     params.filterByArea = True
-    params.minArea = 250
-    #params.maxArea = 5000
+    params.minArea = 1000
+    params.maxArea = 10000
 
     # Filter by Circularity (values between 0 - 1)
     params.filterByCircularity = False
@@ -58,7 +59,7 @@ def detectBlobs(image, hsv_min, hsv_max):
     reversemask = 255 - mask
 
     keypoints = detector.detect(reversemask)
-
+    
     # Draw detected blobs as red circles.
     # cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS ensures the size of the circle corresponds to the size of blob
     im_with_keypoints = cv2.drawKeypoints(frame
@@ -98,6 +99,11 @@ while True:
     ret, frame = vc.read()
     if ret == True:
 
+        '''width = vc.get(cv2.CAP_PROP_FRAME_WIDTH )
+        height = vc.get(cv2.CAP_PROP_FRAME_HEIGHT )
+        fps =  vc.get(cv2.CAP_PROP_FPS)'''
+        #print(width, height)
+
         keypoints = detectBlobs(frame, hsv_min, hsv_max)
 
         for i, keyPoint in enumerate(keypoints):
@@ -107,7 +113,9 @@ while True:
                 x = keyPoint.pt[0]
                 y = keyPoint.pt[1]
                 s = keyPoint.size
-                print ("kp %d: s = %3d   x = %3d  y= %3d"%(i, s, x, y))
+                a = (math.pi*(s**2)) / 2
+                
+                print(f"kp {int(i)}:  s = {int(s)}  x = {int(x)}  y = {int(y)}  a = {int(a)}")
 
 
                 #--- Find x and y position in camera adimensional frame
