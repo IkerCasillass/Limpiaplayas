@@ -22,7 +22,7 @@ def detectBlobs(image, hsv_min, hsv_max):
     # Filter by Area. (meassured in density pixels)
     params.filterByArea = True
     params.minArea = 1000
-    params.maxArea = 10000
+    params.maxArea = 40000
 
     # Filter by Circularity (values between 0 - 1)
     params.filterByCircularity = False
@@ -76,7 +76,7 @@ def detectBlobs(image, hsv_min, hsv_max):
     
     return keypoints
 
-def getBlobPosition(frame, keypoint):
+def getBlobRelativePosition(frame, keypoint):
     rows = float(frame.shape[0])
     cols = float(frame.shape[1])
     center_x    = 0.5*cols
@@ -86,6 +86,23 @@ def getBlobPosition(frame, keypoint):
     y = (keyPoint.pt[1] - center_y)/(center_y)
     return(x,y)
 
+def centerCan(x,y, frame):
+     if x > 0:
+          x_instruction = "Izquierda, "
+     else:
+          x_instruction = "Derecha, "
+    
+     if y > 0:
+          y_instruction = "Arriba"
+     else:
+          y_instruction = "Abajo"
+        
+     text = x_instruction + y_instruction
+
+     cv2.putText(frame, text, (100, 50),
+                cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 0, 0), 2)
+     
+     pass
 
 #Color range for detection!!!!!
 hsv_min = (0, 0, 0)
@@ -98,11 +115,6 @@ vc = cv2.VideoCapture(0)
 while True:
     ret, frame = vc.read()
     if ret == True:
-
-        '''width = vc.get(cv2.CAP_PROP_FRAME_WIDTH )
-        height = vc.get(cv2.CAP_PROP_FRAME_HEIGHT )
-        fps =  vc.get(cv2.CAP_PROP_FPS)'''
-        #print(width, height)
 
         keypoints = detectBlobs(frame, hsv_min, hsv_max)
 
@@ -119,7 +131,10 @@ while True:
 
 
                 #--- Find x and y position in camera adimensional frame
-                x, y = getBlobPosition(frame, keyPoint)
+                x, y = getBlobRelativePosition(frame, keyPoint)
+                #print(x, y)
+
+                centerCan(x, y, frame)
 
         if cv2.waitKey(50) == 27:
             break
