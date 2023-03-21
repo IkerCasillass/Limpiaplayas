@@ -60,21 +60,7 @@ def detectBlobs(image, hsv_min, hsv_max):
 
     keypoints = detector.detect(reversemask)
     
-    # Draw detected blobs as red circles.
-    # cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS ensures the size of the circle corresponds to the size of blob
-    im_with_keypoints = cv2.drawKeypoints(frame
-                                        , keypoints, np.array([]), (0,0,255), cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
-    
-    # Show keypoints
-    number_of_blobs = len(keypoints)
-    text = "Cans detected: " + str(len(keypoints))
-    cv2.putText(im_with_keypoints, text, (20, 350),
-                cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 0, 0), 2)
-    
-    cv2.imshow("Keypoints", im_with_keypoints)
-    cv2.imshow('Inverted mask', reversemask)
-    
-    return keypoints
+    return keypoints, reversemask
 
 def getBlobRelativePosition(frame, keypoint):
     rows = float(frame.shape[0])
@@ -97,12 +83,29 @@ def centerCan(x,y, frame):
      else:
           y_instruction = "Abajo"
         
-     text = x_instruction + y_instruction
+     instruction = x_instruction + y_instruction
 
-     cv2.putText(frame, text, (100, 50),
+     #instruction = cv2.putText(frame, text, (100, 50),
+                #cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 0, 0), 2)
+     
+     return instruction
+
+def showDetectionInfo(keypoints, frame, instruction, line_color=(0,0,255)):
+     im_with_keypoints = cv2.drawKeypoints(frame
+                                        , keypoints, np.array([]), line_color, cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
+     # Show keypoints
+     number_of_blobs = len(keypoints)
+     text = "Cans detected: " + str(len(keypoints))
+     cv2.putText(im_with_keypoints, text, (20, 350),
                 cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 0, 0), 2)
      
+     # Show instruction to center
+     cv2.putText(im_with_keypoints, instruction, (100, 50),
+                cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 255), 2)
+
+     cv2.imshow("DetectionInfo",im_with_keypoints)
      pass
+
 
 #Color range for detection!!!!!
 hsv_min = (0, 0, 0)
@@ -116,7 +119,7 @@ while True:
     ret, frame = vc.read()
     if ret == True:
 
-        keypoints = detectBlobs(frame, hsv_min, hsv_max)
+        keypoints, _ = detectBlobs(frame, hsv_min, hsv_max)
 
         for i, keyPoint in enumerate(keypoints):
                 
@@ -134,7 +137,9 @@ while True:
                 x, y = getBlobRelativePosition(frame, keyPoint)
                 #print(x, y)
 
-                centerCan(x, y, frame)
+                instruction = centerCan(x, y, frame)
+
+                showDetectionInfo(keypoints, frame, instruction)
 
         if cv2.waitKey(50) == 27:
             break
