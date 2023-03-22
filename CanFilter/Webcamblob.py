@@ -1,6 +1,7 @@
 # Standard imports
 import cv2
 import numpy as np
+import math
 
 def detectBlobs(image, hsv_min, hsv_max):
 
@@ -20,8 +21,8 @@ def detectBlobs(image, hsv_min, hsv_max):
 
     # Filter by Area. (meassured in density pixels)
     params.filterByArea = True
-    params.minArea = 250
-    #params.maxArea = 5000
+    params.minArea = 1000
+    params.maxArea = 40000
 
     # Filter by Circularity (values between 0 - 1)
     params.filterByCircularity = False
@@ -58,22 +59,53 @@ def detectBlobs(image, hsv_min, hsv_max):
     reversemask = 255 - mask
 
     keypoints = detector.detect(reversemask)
+    
+    return keypoints, reversemask
 
-    # Draw detected blobs as red circles.
-    # cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS ensures the size of the circle corresponds to the size of blob
-    im_with_keypoints = cv2.drawKeypoints(frame
-                                        , keypoints, np.array([]), (0,0,255), cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
+def getBlobRelativePosition(frame, keypoint):
+    rows = float(frame.shape[0])
+    cols = float(frame.shape[1])
+    center_x    = 0.5*cols
+    center_y    = 0.5*rows
+    # print(center_x)
+    x = (keyPoint.pt[0] - center_x)/(center_x)
+    y = (keyPoint.pt[1] - center_y)/(center_y)
+    return(x,y)
+
+def centerCan(x,y, frame):
+     if x > 0:
+          x_instruction = "Izquierda, "
+     else:
+          x_instruction = "Derecha, "
     
-    # Show keypoints
-    number_of_blobs = len(keypoints)
-    text = "Cans detected: " + str(len(keypoints))
-    cv2.putText(im_with_keypoints, text, (20, 350),
+     if y > 0:
+          y_instruction = "Arriba"
+     else:
+          y_instruction = "Abajo"
+        
+     instruction = x_instruction + y_instruction
+
+     #instruction = cv2.putText(frame, text, (100, 50),
+                #cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 0, 0), 2)
+     
+     return instruction
+
+def showDetectionInfo(keypoints, frame, instruction, line_color=(0,0,255)):
+     im_with_keypoints = cv2.drawKeypoints(frame
+                                        , keypoints, np.array([]), line_color, cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
+     # Show keypoints
+     number_of_blobs = len(keypoints)
+     text = "Cans detected: " + str(len(keypoints))
+     cv2.putText(im_with_keypoints, text, (20, 350),
                 cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 0, 0), 2)
-    
-    cv2.imshow("Keypoints", im_with_keypoints)
-    cv2.imshow('Inverted mask', reversemask)
-    
-    pass
+     
+     # Show instruction to center
+     cv2.putText(im_with_keypoints, instruction, (100, 50),
+                cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 255), 2)
+
+     cv2.imshow("DetectionInfo",im_with_keypoints)
+     pass
+
 
 #Color range for detection!!!!!
 hsv_min = (0, 0, 0)
@@ -87,7 +119,27 @@ while True:
     ret, frame = vc.read()
     if ret == True:
 
-        detectBlobs(frame, hsv_min, hsv_max)
+        keypoints, _ = detectBlobs(frame, hsv_min, hsv_max)
+
+        for i, keyPoint in enumerate(keypoints):
+                
+                #--- Here you can implement some tracking algorithm to filter multiple detections
+                #--- We are simply getting the first result
+                x = keyPoint.pt[0]
+                y = keyPoint.pt[1]
+                s = keyPoint.size
+                a = (math.pi*(s**2)) / 2
+                
+                print(f"kp {int(i)}:  s = {int(s)}  x = {int(x)}  y = {int(y)}  a = {int(a)}")
+
+
+                #--- Find x and y position in camera adimensional frame
+                x, y = getBlobRelativePosition(frame, keyPoint)
+                #print(x, y)
+
+                instruction = centerCan(x, y, frame)
+
+                showDetectionInfo(keypoints, frame, instruction)
 
         if cv2.waitKey(50) == 27:
             break
