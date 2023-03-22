@@ -3,7 +3,7 @@ import cv2
 import numpy as np;
  
 # Read image
-path = r'C:\Users\ikerc\OneDrive\Escritorio\Vision_RT\Tests\Blobs.png' #cambiar a tu path
+path = 'Blobs.png' #cambiar a tu path
 im = cv2.imread(path, cv2.IMREAD_GRAYSCALE) #0
  
 # Set up the detector with default parameters.
