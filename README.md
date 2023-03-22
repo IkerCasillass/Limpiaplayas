@@ -8,7 +8,8 @@ This repository contains code for a Beach Cleaning Robot for the Mexican Robotic
 - [x] ~~**Get can location**~~
 - [x] ~~**Fix problems with cv2 installation in RaspberryPi**~~
 - [ ] **Decision making (text)**
-  - [x] ~~**centerCan()**~~  # remember to define center range
+  - [x] ~~**centerCan()**~~
+  - [ ] Angle to can
   - [ ] Go forward
   - [ ] Already picked up?
   
