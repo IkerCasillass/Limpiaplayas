@@ -37,11 +37,34 @@ def get_blob_centroid(img):
 
         # put text and highlight the center
         cv.circle(img, (cX, cY), 5, (255, 255, 255), -1)
-        cv.putText(img, "centroid", (cX - 25, cY - 25),cv.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
+        #cv.putText(img, "centroid", (cX - 25, cY - 25),cv.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
+        draw_target(img, cX, cY)
         
     # display the image
     cv.imshow("centroid", img)
     cv.imshow("thresh",thresh)
+
+def draw_target(img, cX, cY):
+
+    # Start coordinate (w/2, 0)
+    h, w = img.shape[:2]
+    start_point = (int(w/2), h)
+    
+    # End coordinate, blob
+    end_point = (cX, cY)
+    
+    # Green color in BGR
+    color = (255, 0, 0)
+    
+    # Line thickness of 9 px
+    thickness = 3
+    
+    # Using cv2.line() method
+    # Draw a diagonal green line with thickness of 9 px
+    image = cv.line(img, start_point, end_point, color, thickness)
+    
+    # Displaying the image 
+    cv.imshow('frame', image) 
 
 if __name__ == "__main__":
     vc = cv.VideoCapture(0)
