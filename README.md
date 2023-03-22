@@ -12,6 +12,7 @@ This repository contains code for a Beach Cleaning Robot for the Mexican Robotic
   - [ ] Angle to can
   - [ ] Go forward
   - [ ] Already picked up?
+  - [ ] Get closest blob to camera
   
 - [ ] **In-person testing**
 
