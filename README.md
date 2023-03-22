@@ -6,7 +6,7 @@ This repository contains code for a Beach Cleaning Robot for the Mexican Robotic
 
 ### Week 1  (march 20 - march 26)
 - [x] ~~**Get can location**~~
-- [ ] **Fix problems with cv2 installation in RaspberryPi**
+- [x] ~~**Fix problems with cv2 installation in RaspberryPi**~~
 - [ ] **Decision making (text)**
   - [x] ~~**centerCan()**~~  # remember to define center range
   - [ ] Go forward
