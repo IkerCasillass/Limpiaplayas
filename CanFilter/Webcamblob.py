@@ -72,18 +72,21 @@ def getBlobRelativePosition(frame, keypoint):
     y = (keyPoint.pt[1] - center_y)/(center_y)
     return(x,y)
 
-def centerCan(x,y, frame):
-     if x > 0:
-          x_instruction = "Izquierda, "
+def centerCan(x,y,x_inflim, x_suplim):
+     if x >= x_inflim and x <= x_suplim:
+          instruction = "Centered"
      else:
-          x_instruction = "Derecha, "
-    
-     if y > 0:
-          y_instruction = "Arriba"
-     else:
-          y_instruction = "Abajo"
-        
-     instruction = x_instruction + y_instruction
+          if x > 0:
+               x_instruction = "Izquierda, "
+          else:
+               x_instruction = "Derecha, "
+     
+          if y > 0:
+               y_instruction = "Arriba"
+          else:
+               y_instruction = "Abajo"
+          
+          instruction = x_instruction + y_instruction
 
      #instruction = cv2.putText(frame, text, (100, 50),
                 #cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 0, 0), 2)
@@ -135,9 +138,9 @@ while True:
 
                 #--- Find x and y position in camera adimensional frame
                 x, y = getBlobRelativePosition(frame, keyPoint)
-                #print(x, y)
+                print(x, y)
 
-                instruction = centerCan(x, y, frame)
+                instruction = centerCan(x, y, -0.3, 0.3)
 
                 showDetectionInfo(keypoints, frame, instruction)
 
