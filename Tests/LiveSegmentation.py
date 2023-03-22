@@ -87,6 +87,7 @@ def contour(image):
 
     return segmented
 
+
 if __name__ == "__main__":
     vc = cv.VideoCapture(0)
     while(vc.isOpened()):
@@ -103,9 +104,7 @@ if __name__ == "__main__":
             C = contour(frame)
             #cv.imshow("Contours", C)
 
-            if cv.waitKey(1) & 0xFF == ord('q'):
+            if cv.waitKey(50) == 27:
                 break
-        else:
-            break
     vc.release()
     cv.destroyAllWindows()
