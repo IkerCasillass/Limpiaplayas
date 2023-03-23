@@ -8,7 +8,10 @@ This repository contains code for a Beach Cleaning Robot for the Mexican Robotic
 - [x] ~~**Get can location**~~
 - [x] ~~**Fix problems with cv2 installation in RaspberryPi**~~
 - [ ] **Decision making (text)**
-  - [x] ~~**centerCan()**~~  # remember to define center range
+  - [x] ~~**centerCan()**~~
+  - [ ] ~~**Angle to can**~~
+  - [ ] Get closest blob to camera
+  
   - [ ] Go forward
   - [ ] Already picked up?
   
@@ -30,8 +33,8 @@ This repository contains code for a Beach Cleaning Robot for the Mexican Robotic
 - [ ] **Evading obstacles**
 
 ### Week 5 (apr 17 - apr 23)
-- [ ] **Unassigned**
-- [ ] **Unassigned**
+- [ ] **Optimization and testing**
+
 
 
 
