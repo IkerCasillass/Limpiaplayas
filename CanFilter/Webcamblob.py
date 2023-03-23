@@ -63,7 +63,7 @@ def detectBlobs(image, hsv_min, hsv_max):
     
     return keypoints, reversemask
 
-def getBlobRelativePosition(frame, keypoint):
+def getBlobRelativePosition(frame):
     rows = float(frame.shape[0])
     cols = float(frame.shape[1])
     center_x    = 0.5*cols
@@ -73,18 +73,21 @@ def getBlobRelativePosition(frame, keypoint):
     y = (keyPoint.pt[1] - center_y)/(center_y)
     return(x,y)
 
-def centerCan(x,y, frame):
-     if x > 0:
-          x_instruction = "Izquierda, "
+def centerCan(x,y,x_inflim, x_suplim):
+     if x >= x_inflim and x <= x_suplim:
+          instruction = "Centered"
      else:
-          x_instruction = "Derecha, "
-    
-     if y > 0:
-          y_instruction = "Arriba"
-     else:
-          y_instruction = "Abajo"
-        
-     instruction = x_instruction + y_instruction
+          if x > 0:
+               x_instruction = "Izquierda, "
+          else:
+               x_instruction = "Derecha, "
+     
+          if y > 0:
+               y_instruction = "Arriba"
+          else:
+               y_instruction = "Abajo"
+          
+          instruction = x_instruction + y_instruction
 
      #instruction = cv2.putText(frame, text, (100, 50),
                 #cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 0, 0), 2)
@@ -95,7 +98,6 @@ def showDetectionInfo(keypoints, frame, instruction, line_color=(0,0,255)):
      im_with_keypoints = cv2.drawKeypoints(frame
                                         , keypoints, np.array([]), line_color, cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
      # Show keypoints
-     number_of_blobs = len(keypoints)
      text = "Cans detected: " + str(len(keypoints))
      cv2.putText(im_with_keypoints, text, (20, 350),
                 cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 0, 0), 2)
@@ -121,6 +123,7 @@ while True:
     if ret == True:
 
         keypoints, _ = detectBlobs(frame, hsv_min, hsv_max)
+        #print(keypoints)
 
         for i, keyPoint in enumerate(keypoints):
                 
@@ -135,10 +138,10 @@ while True:
 
 
                 #--- Find x and y position in camera adimensional frame
-                x, y = getBlobRelativePosition(frame, keyPoint)
-                #print(x, y)
+                x, y = getBlobRelativePosition(frame)
+                print(x, y)
 
-                instruction = centerCan(x, y, frame)
+                instruction = centerCan(x, y, -0.3, 0.3)
 
                 showDetectionInfo(keypoints, frame, instruction)
 
