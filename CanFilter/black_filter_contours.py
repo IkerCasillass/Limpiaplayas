@@ -65,10 +65,10 @@ def video_analisis(frame):
     #cv.imshow("open", closing)
 
 #MAIN
-vc = cv.VideoCapture(0)
-#vc = cv.imread("./lata_playa.jpg")
-#resized = cv.resize(vc,(720,500))
-#blur = cv.GaussianBlur(resized,(7,7),cv.BORDER_DEFAULT)
+#vc = cv.VideoCapture(0)
+vc = cv.imread("./lata_playa.jpg")
+resized = cv.resize(vc,(720,500))
+blur = cv.GaussianBlur(resized,(7,7),cv.BORDER_DEFAULT)
 Black = np.array([0, 0, 0], np.uint8)
 Black1 = np.array([0, 0, 30], np.uint8)
 
@@ -79,7 +79,7 @@ trackbar_name = 'Black'
 cv.createTrackbar(trackbar_name, "frame" , 0, slider_Max, nothing)
 
 
-while True:
+'''while True:
     ret, frame = vc.read()
     if ret == True:
         video_analisis(frame)
@@ -88,10 +88,10 @@ while True:
         if cv.waitKey(50) == 27:
             break
 
-vc.release()
-'''while True:
-    #video_analisis(blur)
-    get_blob_centroid(blur)
+vc.release()'''
+while True:
+    video_analisis(blur)
+    #get_blob_centroid(blur)
     if cv.waitKey(50) == 27:
-        break'''
+        break
 cv.destroyAllWindows()
