@@ -33,8 +33,8 @@ This repository contains code for a Beach Cleaning Robot for the Mexican Robotic
 - [ ] **Evading obstacles**
 
 ### Week 5 (apr 17 - apr 23)
-- [ ] **Unassigned**
-- [ ] **Unassigned**
+- [ ] **Optimization and testing**
+
 
 
 
