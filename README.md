@@ -9,7 +9,7 @@ This repository contains code for a Beach Cleaning Robot for the Mexican Robotic
 - [x] ~~**Fix problems with cv2 installation in RaspberryPi**~~
 - [ ] **Decision making (text)**
   - [x] ~~**centerCan()**~~
-  - [x]~~**Angle to can**~~
+  - [ ] ~~**Angle to can**~~
   - [ ] Get closest blob to camera
   
   - [ ] Go forward
