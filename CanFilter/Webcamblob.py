@@ -94,13 +94,36 @@ def centerCan(x,y,x_inflim, x_suplim):
      
      return instruction
 
-def showDetectionInfo(keypoints, frame, instruction, line_color=(0,0,255)):
+def getAngle(frame, windowSize, point):
+     h = windowSize[0]
+     w = windowSize[1]
+
+     topPoint = (int(w/2),0)
+     bottomPoint = (int(w/2), h)
+
+     image = cv2.line(frame, bottomPoint, topPoint, (0,0,255), 2)
+
+     X = point[0] - int(w/2)
+     Y = point[1] - 0
+     angle = math.atan2(Y,X) * (180.0 / math.pi)
+     #msg = 'Angle: ' + str(angle)
+     #cv2.putText(image, msg, (100, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 255), 2)
+     #cv2.imshow('frame', image)
+
+     return angle
+
+def showDetectionInfo(keypoints, frame, instruction, angle, line_color=(0,0,255)):
      im_with_keypoints = cv2.drawKeypoints(frame
                                         , keypoints, np.array([]), line_color, cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
      # Show keypoints
      text = "Cans detected: " + str(len(keypoints))
      cv2.putText(im_with_keypoints, text, (20, 350),
                 cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 0, 0), 2)
+     
+     # Show angle
+     text = "angle: " + str(round(angle, 2)) # Angle with 2 decimals
+     cv2.putText(im_with_keypoints, text, (200, 240),
+                cv2.FONT_HERSHEY_SIMPLEX, 0.8, (170, 255, 0), 2)
      
      # Show instruction to center
      cv2.putText(im_with_keypoints, instruction, (100, 50),
@@ -109,11 +132,14 @@ def showDetectionInfo(keypoints, frame, instruction, line_color=(0,0,255)):
      cv2.imshow("DetectionInfo",im_with_keypoints)
      pass
 
-
 def main():
      #Color range for detection!!!!!
      hsv_min = (0, 0, 0)
      hsv_max = (180, 255, 30)
+
+     #Window size
+     h = 480
+     w = 640
 
      #Webcam video
      vc = cv2.VideoCapture(0)
@@ -137,6 +163,8 @@ def main():
                          
                          print(f"kp {int(i)}:  s = {int(s)}  x = {int(x)}  y = {int(y)}  a = {int(a)}")
 
+                         angle = getAngle(frame, (h,w), (x,y))
+
 
                          #--- Find x and y position in camera adimensional frame
                          x, y = getBlobRelativePosition(frame, keyPoint)
@@ -144,11 +172,13 @@ def main():
 
                          instruction = centerCan(x, y, -0.3, 0.3)
 
-                         showDetectionInfo(keypoints, frame, instruction)
+
+                         
+                         showDetectionInfo(keypoints, frame, instruction, angle)
 
                if cv2.waitKey(50) == 27:
                     break
-               
+
      cv2.destroyAllWindows()
 
 
