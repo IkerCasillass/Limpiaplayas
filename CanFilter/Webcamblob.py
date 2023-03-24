@@ -145,7 +145,6 @@ def main():
           if ret == True:
 
                keypoints, _ = detectBlobs(frame, hsv_min, hsv_max)
-               #print(keypoints)
 
                for i, keyPoint in enumerate(keypoints):
                          
@@ -158,17 +157,17 @@ def main():
                          
                          print(f"kp {int(i)}:  s = {int(s)}  x = {int(x)}  y = {int(y)}  a = {int(a)}")
 
+                         # Get the angle of current blob
                          angle = getAngle(frame, (h,w), (x,y))
-
 
                          #--- Find x and y position in camera adimensional frame
                          x, y = getBlobRelativePosition(frame, keyPoint)
-                         print(x, y)
 
+                         # Get instruction to center the can
                          instruction = centerCan(x, y, -0.3, 0.3)
 
 
-                         
+                         # Show all the detection info in the frame
                          showDetectionInfo(keypoints, frame, instruction, angle)
 
                if cv2.waitKey(50) == 27:
