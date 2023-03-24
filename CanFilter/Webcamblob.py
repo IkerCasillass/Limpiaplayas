@@ -110,43 +110,48 @@ def showDetectionInfo(keypoints, frame, instruction, line_color=(0,0,255)):
      pass
 
 
-#Color range for detection!!!!!
-hsv_min = (0, 0, 0)
-hsv_max = (180, 255, 30)
+def main():
+     #Color range for detection!!!!!
+     hsv_min = (0, 0, 0)
+     hsv_max = (180, 255, 30)
 
-#Webcam video
-vc = cv2.VideoCapture(0)
+     #Webcam video
+     vc = cv2.VideoCapture(0)
 
-#Main loop
-while True:
-    ret, frame = vc.read()
-    if ret == True:
+     #Main loop
+     while True:
+          ret, frame = vc.read()
+          if ret == True:
 
-        keypoints, _ = detectBlobs(frame, hsv_min, hsv_max)
-        #print(keypoints)
+               keypoints, _ = detectBlobs(frame, hsv_min, hsv_max)
+               #print(keypoints)
 
-        for i, keyPoint in enumerate(keypoints):
-                
-                #--- Here you can implement some tracking algorithm to filter multiple detections
-                #--- We are simply getting the first result
-                x = keyPoint.pt[0]
-                y = keyPoint.pt[1]
-                s = keyPoint.size
-                a = (math.pi*(s**2)) / 2
-                
-                print(f"kp {int(i)}:  s = {int(s)}  x = {int(x)}  y = {int(y)}  a = {int(a)}")
+               for i, keyPoint in enumerate(keypoints):
+                         
+                         #--- Here you can implement some tracking algorithm to filter multiple detections
+                         #--- We are simply getting the first result
+                         x = keyPoint.pt[0]
+                         y = keyPoint.pt[1]
+                         s = keyPoint.size
+                         a = (math.pi*(s**2)) / 2
+                         
+                         print(f"kp {int(i)}:  s = {int(s)}  x = {int(x)}  y = {int(y)}  a = {int(a)}")
 
 
-                #--- Find x and y position in camera adimensional frame
-                x, y = getBlobRelativePosition(frame, keyPoint)
-                print(x, y)
+                         #--- Find x and y position in camera adimensional frame
+                         x, y = getBlobRelativePosition(frame, keyPoint)
+                         print(x, y)
 
-                instruction = centerCan(x, y, -0.3, 0.3)
+                         instruction = centerCan(x, y, -0.3, 0.3)
 
-                showDetectionInfo(keypoints, frame, instruction)
+                         showDetectionInfo(keypoints, frame, instruction)
 
-        if cv2.waitKey(50) == 27:
-            break
+               if cv2.waitKey(50) == 27:
+                    break
+               
+     cv2.destroyAllWindows()
 
-cv2.destroyAllWindows()
 
+
+if __name__ == "__main__":
+     main()
