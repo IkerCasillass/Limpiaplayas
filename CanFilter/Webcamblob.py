@@ -63,7 +63,7 @@ def detectBlobs(image, hsv_min, hsv_max):
     
     return keypoints, reversemask
 
-def getBlobRelativePosition(frame):
+def getBlobRelativePosition(frame, keyPoint):
     rows = float(frame.shape[0])
     cols = float(frame.shape[1])
     center_x    = 0.5*cols
@@ -138,7 +138,7 @@ while True:
 
 
                 #--- Find x and y position in camera adimensional frame
-                x, y = getBlobRelativePosition(frame)
+                x, y = getBlobRelativePosition(frame, keyPoint)
                 print(x, y)
 
                 instruction = centerCan(x, y, -0.3, 0.3)
