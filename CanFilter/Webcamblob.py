@@ -89,26 +89,21 @@ def centerCan(x,y,x_inflim, x_suplim):
           
           instruction = x_instruction + y_instruction
 
-     #instruction = cv2.putText(frame, text, (100, 50),
-                #cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 0, 0), 2)
-     
      return instruction
 
 def getAngle(frame, windowSize, point):
+     # WindowSize = (h,w)    point = (x,y)
      h = windowSize[0]
      w = windowSize[1]
 
      topPoint = (int(w/2),0)
      bottomPoint = (int(w/2), h)
 
-     image = cv2.line(frame, bottomPoint, topPoint, (0,0,255), 2)
+     frame = cv2.line(frame, bottomPoint, topPoint, (0,0,255), 2)
 
      X = point[0] - int(w/2)
      Y = point[1] - 0
      angle = math.atan2(Y,X) * (180.0 / math.pi)
-     #msg = 'Angle: ' + str(angle)
-     #cv2.putText(image, msg, (100, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 255), 2)
-     #cv2.imshow('frame', image)
 
      return angle
 
