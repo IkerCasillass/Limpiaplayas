@@ -68,11 +68,11 @@ def getBlobRelativePosition(frame, keyPoint):
     cols = float(frame.shape[1])
     center_x    = 0.5*cols
     center_y    = 0.5*rows
-    # print(center_x)
+
     x = (keyPoint.pt[0] - center_x)/(center_x)
     y = (keyPoint.pt[1] - center_y)/(center_y)
     return(x,y)
-
+     
 def centerCan(x,y,x_inflim, x_suplim):
      if x >= x_inflim and x <= x_suplim:
           instruction = "Centered"
@@ -106,6 +106,30 @@ def getAngle(frame, windowSize, point):
      angle = math.atan2(Y,X) * (180.0 / math.pi)
 
      return angle
+
+def draw_target(frame, windowSize, point):
+
+    if point[0] == 0 or point[1] == 0:
+        return
+    # Start coordinate at the bottom of the image (w/2, 0)
+    h = windowSize[0]
+    w = windowSize[1]
+    start_point = (int(w/2), h)
+    
+    # End coordinate, blob
+    end_point = (point[0], point[1])
+    
+    # Green color in BGR
+    color = (255, 0, 0)
+    
+    # Line thickness of 9 px
+    thickness = 3
+    
+    # Using cv2.line() method
+    # Draw a diagonal green line with thickness of 9 px
+    image = cv2.line(frame, start_point, end_point, color, thickness)
+
+    pass
 
 def showDetectionInfo(keypoints, frame, instruction, angle, line_color=(0,0,255)):
      im_with_keypoints = cv2.drawKeypoints(frame
@@ -144,32 +168,41 @@ def main():
           ret, frame = vc.read()
           if ret == True:
 
-               keypoints, _ = detectBlobs(frame, hsv_min, hsv_max)
+               keypoints, reversemask = detectBlobs(frame, hsv_min, hsv_max)
+               D = [] # list for distance of blobs
 
-               for i, keyPoint in enumerate(keypoints):
-                         
-                         #--- Here you can implement some tracking algorithm to filter multiple detections
-                         #--- We are simply getting the first result
+               for keyPoint in keypoints:
+
                          x = keyPoint.pt[0]
                          y = keyPoint.pt[1]
                          s = keyPoint.size
                          a = (math.pi*(s**2)) / 2
                          
-                         print(f"kp {int(i)}:  s = {int(s)}  x = {int(x)}  y = {int(y)}  a = {int(a)}")
-
-                         # Get the angle of current blob
-                         angle = getAngle(frame, (h,w), (x,y))
+                         #Show blob info
+                         print(f"s = {int(s)} x = {int(x)}  y = {int(y)}  a = {int(a)}")
 
                          #--- Find x and y position in camera adimensional frame
-                         x, y = getBlobRelativePosition(frame, keyPoint)
-
+                         xr, yr = getBlobRelativePosition(frame, keyPoint)
+          
                          # Get instruction to center the can
-                         instruction = centerCan(x, y, -0.3, 0.3)
+                         instruction = centerCan(xr, yr, -0.3, 0.3)
 
+                         # Determine minimum distance
+                         dist = math.sqrt( (x - int(w/2))**2 + (y - h)**2 )
+                         D.append(dist)
+                         if dist <= min(D):
+                              #minimal x and y
+                              fX = int(x)
+                              fY = int(y)
+                         draw_target(frame,(h,w),(fX,fY))
+
+                         # Get the angle of current blob
+                         angle = getAngle(frame, (h,w), (fX,fY))
 
                          # Show all the detection info in the frame
                          showDetectionInfo(keypoints, frame, instruction, angle)
 
+                         cv2.imshow("mask", reversemask)
                if cv2.waitKey(50) == 27:
                     break
 
