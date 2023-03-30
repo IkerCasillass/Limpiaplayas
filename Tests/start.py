@@ -3,6 +3,9 @@
 import cv2
 import numpy as np
 import math
+import time
+
+#Functions for blob detection
 
 def detectBlobs(image, hsv_min, hsv_max):
 
@@ -151,75 +154,8 @@ def showDetectionInfo(keypoints, frame, instruction, angle, line_color=(0,0,255)
      cv2.imshow("DetectionInfo",im_with_keypoints)
      pass
 
-def main():
-     #Color range for detection!!!!!
-     hsv_min = (0, 0, 0)
-     hsv_max = (180, 255, 30)
-
-     #Window size
-     h = 480
-     w = 640
-
-     #Webcam video
-     vc = cv2.VideoCapture(0)
-
-     #Main loop
-     while True:
-          ret, frame = vc.read()
-          if ret == True:
-
-               keypoints, reversemask = detectBlobs(frame, hsv_min, hsv_max)
-               D = [] # list for distance of blobs
-
-               for keyPoint in keypoints:
-
-                         x = keyPoint.pt[0]
-                         y = keyPoint.pt[1]
-                         s = keyPoint.size
-                         a = (math.pi*(s**2)) / 2
-                         
-                         #Show blob info
-                         print(f"s = {int(s)} x = {int(x)}  y = {int(y)}  a = {int(a)}")
-
-                         #--- Find x and y position in camera adimensional frame
-                         xr, yr = getBlobRelativePosition(frame, keyPoint)
-          
-                         # Get instruction to center the can
-                         instruction = centerCan(xr, yr, -0.3, 0.3)
-
-                         # Determine minimum distance
-                         dist = math.sqrt( (x - int(w/2))**2 + (y - h)**2 )
-                         D.append(dist)
-                         if dist <= min(D):
-                              #minimal x and y
-                              fX = int(x)
-                              fY = int(y)
-                         draw_target(frame,(h,w),(fX,fY))
-
-                         # Get the angle of current blob
-                         angle = getAngle(frame, (h,w), (fX,fY))
-
-                         # Show all the detection info in the frame
-                         showDetectionInfo(keypoints, frame, instruction, angle)
-
-                         cv2.imshow("mask", reversemask)
-               if cv2.waitKey(50) == 27:
-                    break
-
-     cv2.destroyAllWindows()
-
-
-
-
-'''
-# !usr/bin/python
-# Standard imports
-import cv2
-import numpy as np
-import math
-import time
-
-def detectBlobs(image, hsv_min, hsv_max):
+# Functions for sea
+def detectSea(image, hsv_min, hsv_max):
      # Convertir el fotograma a formato HSV
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
@@ -272,42 +208,6 @@ def detectBlobs(image, hsv_min, hsv_max):
 
     return keypoints, res
 
-def nothing(x):
-          pass
-cv2.namedWindow("Trackbars")
-cv2.createTrackbar("L - H", "Trackbars",90 ,100,nothing ) 
-cv2.createTrackbar("L - S", "Trackbars", 50, 50,nothing)
-cv2.createTrackbar("L - V", "Trackbars", 50, 50,nothing)
-cv2.createTrackbar("U - H", "Trackbars", 130, 150,nothing)
-cv2.createTrackbar("U - S", "Trackbars", 100, 255,nothing)
-cv2.createTrackbar("U - V", "Trackbars", 100, 255, nothing)
-
-def hsvcolors():
-
-     l_h = cv2.getTrackbarPos("L - H", "Trackbars")
-     l_s = cv2.getTrackbarPos("L - S", "Trackbars")
-     l_v = cv2.getTrackbarPos("L - V", "Trackbars")
-     u_h = cv2.getTrackbarPos("U - H", "Trackbars")
-     u_s = cv2.getTrackbarPos("U - S", "Trackbars")
-     u_v = cv2.getTrackbarPos("U - V", "Trackbars")
- 
-    # Set the lower and upper HSV range according to the value selected
-    # by the trackbar
-     hsv_min = (l_h, l_s, l_v)
-     hsv_max = (u_h, u_s, u_v)
-     return hsv_min, hsv_max
-
-
-def getBlobRelativePosition(frame, keyPoint):
-    rows = float(frame.shape[0])
-    cols = float(frame.shape[1])
-    center_x    = 0.5*cols
-    center_y    = 0.5*rows
-    # print(center_x)
-    x = (keyPoint.pt[0] - center_x)/(center_x)
-    y = (keyPoint.pt[1] - center_y)/(center_y)
-    return(x,y)
-
 def avoidSea(x,y,x_inflim, x_suplim):  
      x_instruction=""
      y_instruction="" 
@@ -333,33 +233,16 @@ def avoidSea(x,y,x_inflim, x_suplim):
 
      return instruction
 
-def getAngle(frame, windowSize, point):
-     # WindowSize = (h,w)    point = (x,y)
-     h = windowSize[0]
-     w = windowSize[1]
-
-     topPoint = (int(w/2),0)
-     bottomPoint = (int(w/2), h)
-
-     frame = cv2.line(frame, bottomPoint, topPoint, (0,0,255), 2)
-
-     X = point[0] - int(w/2)
-     Y = point[1] - 0
-     angle = math.atan2(Y,X) * (180.0 / math.pi)
-
-     return angle
-
-def showDetectionInfo(keypoints, res, instruction, angle, line_color=(0,0,255)):
-     im_with_keypoints = cv2.drawKeypoints(res
-                                        , keypoints, np.array([]), line_color, cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
- 
-     # Show instruction to avoid
-     cv2.putText(im_with_keypoints, instruction, (100, 50),
-                cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 255), 2)
-     cv2.imshow("DetectionInfo",im_with_keypoints)
-     pass
-
 def main():
+     #Color range for detection!!!!!
+
+     #For cans
+     hsv_min_black = (0, 0, 0)
+     hsv_max_black = (180, 255, 30)
+
+     #For sea
+     hsv_min_blue = (99, 132, 90)
+     hsv_max_blue = (136, 255, 255)
 
      #Window size
      h = 480
@@ -372,44 +255,48 @@ def main():
      while True:
           ret, frame = vc.read()
           if ret == True:
-               hsv_min,hsv_max= hsvcolors()
-               keypoints, res = detectBlobs(frame, hsv_min, hsv_max)
 
-               for i, keyPoint in enumerate(keypoints):
-                         
-                         
-                         #--- Here you can implement some tracking algorithm to filter multiple detections
-                         #--- We are simply getting the first result
+               keypoints, reversemask = detectBlobs(frame, hsv_min_black, hsv_max_black)
+               D = [] # list for distance of blobs
+
+               for keyPoint in keypoints:
+
                          x = keyPoint.pt[0]
                          y = keyPoint.pt[1]
                          s = keyPoint.size
                          a = (math.pi*(s**2)) / 2
-
-                         # Get the angle of current blob
-                         angle = getAngle(frame, (h,w), (x,y))
+                         
+                         #Show blob info
+                         print(f"s = {int(s)} x = {int(x)}  y = {int(y)}  a = {int(a)}")
 
                          #--- Find x and y position in camera adimensional frame
-                         x, y = getBlobRelativePosition(frame, keyPoint)
-
+                         xr, yr = getBlobRelativePosition(frame, keyPoint)
+          
                          # Get instruction to center the can
-                         instruction = avoidSea(x, y, -0.3, 0.3)
+                         instruction = centerCan(xr, yr, -0.3, 0.3)
+                         #instructionSea = avoidSea(xr, yr, -0.3, 0.3)
 
+                         # Determine minimum distance
+                         dist = math.sqrt( (x - int(w/2))**2 + (y - h)**2 )
+                         D.append(dist)
+                         if dist <= min(D):
+                              #minimal x and y
+                              fX = int(x)
+                              fY = int(y)
+                         draw_target(frame,(h,w),(fX,fY))
+
+                         # Get the angle of current blob
+                         angle = getAngle(frame, (h,w), (fX,fY))
 
                          # Show all the detection info in the frame
-                         showDetectionInfo(keypoints, res, instruction, angle)
+                         showDetectionInfo(keypoints, frame, instruction, angle)
 
+                         cv2.imshow("mask", reversemask)
                if cv2.waitKey(50) == 27:
                     break
 
      cv2.destroyAllWindows()
 
-
-
-if __name__ == "__main__":
-     main()
-
-
-'''
 
 if __name__ == "__main__":
      main()
