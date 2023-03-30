@@ -5,7 +5,7 @@ def nothing(x):
     pass
 
 # image Path
-image = cv2.imread(r'C:\Users\ikerc\OneDrive\Escritorio\Vision_RT\Resources\HSVScale.png')
+image = cv2.imread(r'C:\Users\ikerc\OneDrive\Escritorio\Vision_RT\Calibration\HSVScale.png')
 
 # Create a window
 cv2.namedWindow('image')
