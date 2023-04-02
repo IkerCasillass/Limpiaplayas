@@ -80,7 +80,8 @@ def get_blobs(img, shape):
             #minimal x and y
             fX = cX
             fY = cY
-    draw_target(img,(h,w),(fX,fY))
+    if fX != 0 and fY != 0:
+        draw_target(img,(h,w),(fX,fY))
 
     # display the image
     #cv.imshow("Image", img)
@@ -131,9 +132,30 @@ def get_angle(img, shape, point):
     cv.imshow('frame', image)
 
 #def pickedCan(img, )
+
+def detectSea(img, shape):
+    h = shape[0]
+    w = shape[1]
+    blueHSV = cv.cvtColor(img, cv.COLOR_BGR2HSV)
+    lowerBlue = np.array([88, 50, 20], np.uint8) #lower blue mask
+    upperBlue = np.array([125, 255, 255], np.uint8) #upper blue mask
+
+    kernel = np.ones((11, 11), np.uint8)
+    blueMask = cv.inRange(blueHSV,lowerBlue,upperBlue)
+    opening = cv.morphologyEx(blueMask, cv.MORPH_OPEN, kernel, iterations=3)
+    closing = cv.morphologyEx(opening, cv.MORPH_CLOSE, kernel)
+
+    sea =  cv.bitwise_and(img, img, mask=closing)
+
+    cv.imshow("sea", sea)
+
+
     
 def main():
     vc = cv.VideoCapture(0)
+
+    #get img size to adjust these parameters
+    #print( vc.shape )
     h = 480
     w = 640
     while(vc.isOpened()):
@@ -146,6 +168,7 @@ def main():
 
             #get_blob_centroid(frame,(h,w))
             get_blobs(frame,(h,w))
+            detectSea(frame, (h,w))
             if cv.waitKey(50) == 27:
                 break
     vc.release()

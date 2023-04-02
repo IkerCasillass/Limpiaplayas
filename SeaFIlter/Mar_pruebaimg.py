@@ -1,7 +1,7 @@
 import cv2 as cv
 import numpy as np
 
-src = r"C:\Users\ikerc\OneDrive\Escritorio\Vision_RT\SeaFIlter\Prueba_playa.jpg" #Raw string con ruta de la imagen
+src = "Prueba_playa.jpg" #Raw string con ruta de la imagen
 img = cv.imread(src, 1) #Leer imagen
 
 HSVimg = cv.cvtColor(img, cv.COLOR_BGR2HSV) #BGR a HSV
