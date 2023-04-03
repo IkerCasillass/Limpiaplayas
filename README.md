@@ -7,15 +7,15 @@ This repository contains code for a Beach Cleaning Robot for the Mexican Robotic
 ### Week 1  (march 20 - march 26)
 - [x] ~~**Get can location**~~
 - [x] ~~**Fix problems with cv2 installation in RaspberryPi**~~
-- [ ] **Decision making (text)**
+- [x] **Decision making (text)**
   - [x] ~~**centerCan()**~~
   - [x] ~~**Angle to can**~~
   - [x] ~~**Get closest blob to camera**~~
   
   - [x] ~~**Go forward**~~
-  - [ ] Already picked up?
+
   
-- [ ] **In-person testing**
+- [x] **In-person testing**
 
 ### Week 2 (march 27 - apr 2)
 - [ ] **Evasion strategy (what if the sea is diagonal to the bot?)**
@@ -29,7 +29,8 @@ This repository contains code for a Beach Cleaning Robot for the Mexican Robotic
   - [ ] Redfilter
   - [ ] Decision making
   - [ ] Testing
-
+  - [ ] Already picked up?
+  
 ### Week 4 (apr 10 - apr 16)
 - [ ] **Evading obstacles**
 
