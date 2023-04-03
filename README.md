@@ -40,7 +40,7 @@ This repository contains code for a Beach Cleaning Robot for the Mexican Robotic
 ---
 
 ## Resources
-- [Get contours coordinates](https://stackoverflow.com/questions/39441935/how-to-get-x-y-position-of-contours-in-python-opencv)
+- [Get contours coordinates](https://www.geeksforgeeks.org/find-co-ordinates-of-contours-using-opencv-python/)
 
 ---
 
