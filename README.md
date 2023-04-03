@@ -37,8 +37,12 @@ This repository contains code for a Beach Cleaning Robot for the Mexican Robotic
 ### Week 5 (apr 17 - apr 23)
 - [ ] **Optimization and testing**
 
+---
 
+## Resources
+- [Get contours coordinates](https://stackoverflow.com/questions/39441935/how-to-get-x-y-position-of-contours-in-python-opencv)
 
+---
 
 
 
