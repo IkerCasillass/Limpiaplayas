@@ -1,72 +1,82 @@
-import cv2 as cv
+import cv2
 import numpy as np
-def kmeans(image):
 
-    img = image.copy()
-    pixel_values = img.reshape((-1, 3))
-    pixel_values = np.float32(pixel_values)
+def detectSea(img, shape):
+    h = shape[0]
+    w = shape[1]
+    blueHSV = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+    lowerBlue = np.array([88, 50, 20], np.uint8) #lower blue mask
+    upperBlue = np.array([125, 255, 255], np.uint8) #upper blue mask
 
-    stop_criteria = (cv.TERM_CRITERIA_EPS + cv.TERM_CRITERIA_MAX_ITER, 10, 1.0)
+    kernel = np.ones((11, 11), np.uint8)
+    blueMask = cv2.inRange(blueHSV,lowerBlue,upperBlue)
+    opening = cv2.morphologyEx(blueMask, cv2.MORPH_OPEN, kernel, iterations=3)
+    closing = cv2.morphologyEx(opening, cv2.MORPH_CLOSE, kernel)
+
+    sea =  cv2.bitwise_and(img, img, mask=closing)
+
+    grayimg = cv2.cvtColor(sea, cv2.COLOR_BGR2GRAY)
+        # Detecting contours in image. 
+    contours, _= cv2.findContours(grayimg, cv2.RETR_TREE, 
+                                cv2.CHAIN_APPROX_SIMPLE) 
     
-    number_of_attempts = 10
+
+    font = cv2.FONT_HERSHEY_COMPLEX
     
-    # Esta es la estrategia para inicializar los centroides. En este caso, optamos por inicializacin aleatoria.
-    centroid_initialization_strategy = cv.KMEANS_RANDOM_CENTERS
-    
-    _, labels, centers = cv.kmeans(pixel_values,
-                                    3, #num of clusters
-                                    None,
-                                    stop_criteria,
-                                    number_of_attempts,
-                                    centroid_initialization_strategy)
-    
-    # Aplicamos las etiquetas a los centroides para segmentar los pixeles en su grupo correspondiente.
-    centers = np.uint8(centers)
-    segmented_data = centers[labels.flatten()]
-    
-    # Debemos reestructurar el arreglo de datos segmentados con las dimensiones de la imagen original.
-    segmented_image = segmented_data.reshape(img.shape)
-    
-    # Mostramos la imagen segmentada resultante.
-    return segmented_image
+    #For storing y coordinates of sea
+    ycoordinates = []
+    # Going through every contours found in the image. 
+    for cnt in contours : 
+
+        approx = cv2.approxPolyDP(cnt, 0.009 * cv2.arcLength(cnt, True), True) 
+
+        # draws boundary of contours. 
+        cv2.drawContours(img, [approx], 0, (0, 0, 255), 5) 
+
+        # Used to flatted the array containing 
+        # the co-ordinates of the vertices. 
+        n = approx.ravel() 
+        i = 0
 
 
-vc = cv.VideoCapture(0)
+        for j in n : 
+            if(i % 2 == 0): 
+                x = n[i] 
+                y = n[i + 1] 
+                ycoordinates.append(y)
 
-lightBlue1 = np.array([88, 50, 20], np.uint8)
-lightBlue2 = np.array([97, 255, 255], np.uint8)
+                # String containing the co-ordinates. 
+                string = str(x) + " " + str(y) 
 
-Blue1 = np.array([97, 50, 20], np.uint8)
-Blue2 = np.array([125, 255, 255], np.uint8)
+                if(i == 0): 
+                    # text on topmost co-ordinate. 
+                    cv2.putText(img, "Arrow tip", (x, y), 
+                                    font, 0.5, (255, 0, 0)) 
 
+                else: 
+                    # text on remaining co-ordinates. 
+                    cv2.putText(img, string, (x, y), 
+                            font, 0.5, (0, 255, 0)) 
+            i = i + 1
 
+    return max(ycoordinates), sea
 
-while True:
-    ret, frame = vc.read()
-    if ret == True:
-        frameHSV = cv.cvtColor(frame, cv.COLOR_BGR2HSV) # Transformar BGR a HSV
-        
-        blueMask1 = cv.inRange(frameHSV, lightBlue1, lightBlue2)
-        blueMask2 = cv.inRange(frameHSV, Blue1, Blue2)
+def main():
+    vc = cv2.VideoCapture(0)
+    h = 480
+    w = 640
 
-        allBlues = cv.add(blueMask1, blueMask2)
-        visualizeBlues = cv.bitwise_and(frame, frame, mask=allBlues)
+    while True:
+        ret, frame = vc.read()
+        if ret == True:
+            lower_bound, sea = detectSea(frame, (h,w))
+            cv2.imshow("Sea", sea)
+            print(lower_bound)
+            if cv2.waitKey(50) == 27:
+                break
 
-        kernel = np.ones((5, 5), np.uint8)
-        opening = cv.morphologyEx(visualizeBlues, cv.MORPH_OPEN, kernel, iterations=1)
-        closing = cv.morphologyEx(visualizeBlues, cv.MORPH_CLOSE, kernel)
-        
-        #cv.imshow('frame', frame)
-        #cv.imshow('Light Blue', blueMask1)
-        #cv.imshow('Blue', blueMask2)
-        #cv.imshow('All blues', allBlues)
-        #cv.imshow('Visualize Blues', visualizeBlues)
-        #cv.imshow("open", opening)
-        #cv.imshow("closing", closing)
-        #K = kmeans(visualizeBlues)
-        #cv.imshow("kmeans", K)
-        if cv.waitKey(50) == 27:
-            break
+    vc.release()
+    cv2.destroyAllWindows()
 
-vc.release()
-cv.destroyAllWindows()
+if __name__ == "__main__":
+    main()
