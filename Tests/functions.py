@@ -239,3 +239,24 @@ def avoidSea(x,y,x_inflim, x_suplim):
      
 
      return instruction
+
+def centerHoop(x,y,x_inflim, x_suplim):
+     if x >= x_inflim and x <= x_suplim:
+          instruction = "Centered, drop can"
+          visionCan= ("Centered hoop in vision")
+     else:
+          if x > 0:
+               x_instruction = "Izquierda, "
+               visionCan= ("Hoop in the left")
+          else:
+               x_instruction = "Derecha, "
+               visionCan= ("Hoop in the right")
+     
+          if y < 0:
+               y_instruction = " Hoop Arriba, avanza 1"
+               visionCan= ("Hoop far")
+          else:
+               y_instruction = "Hoop Abajo, retrocede 1"
+          instruction = x_instruction + y_instruction
+
+     return instruction,visionCan
