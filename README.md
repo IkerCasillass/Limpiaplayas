@@ -18,9 +18,9 @@ This repository contains code for a Beach Cleaning Robot for the Mexican Robotic
 - [x] **In-person testing**
 
 ### Week 2 (march 27 - apr 2)
-- [ ] **Evasion strategy (what if the sea is diagonal to the bot?)**
-  - [ ] Distance to sea
-  - [ ] Define bottom edge of sea
+- [] **Evasion strategy (what if the sea is diagonal to the bot?)**
+  - [x] ~~Distance to sea~~
+  - [x] ~~Define bottom edge of sea~~
 - [ ]  **Raspberry-Arduino communication**
 
 
