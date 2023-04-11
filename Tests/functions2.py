@@ -91,11 +91,11 @@ def centerCan(x,y,x_inflim, x_suplim):
 
      else:
           if x > 0:
-               x_instruction = "Izquierda, "
+               x_instruction = "Muevete a la Derecha, "
                visionCan= ("Can in the right")
      
           else:
-               x_instruction = "Derecha, "
+               x_instruction = "Muevete a la Izquierda, "
                visionCan= ("Can in the left")
      
           instruction = x_instruction + y_instruction
@@ -142,11 +142,11 @@ def draw_target(frame, windowSize, point):
 
     pass
 
-def showDetectionInfo(keypoints, frame, instruction, angle, line_color=(0,0,255)):
+def showDetectionInfo(keypoints, frame, instruction, angle,variable, line_color=(0,0,255)):
      im_with_keypoints = cv2.drawKeypoints(frame
                                         , keypoints, np.array([]), line_color, cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
      # Show keypoints
-     text = "Cans detected: " + str(len(keypoints))
+     text = variable + str(len(keypoints))
      cv2.putText(im_with_keypoints, text, (20, 350),
                 cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 0, 0), 2)
      
@@ -158,65 +158,80 @@ def showDetectionInfo(keypoints, frame, instruction, angle, line_color=(0,0,255)
      # Show instruction to center
      cv2.putText(im_with_keypoints, instruction, (100, 50),
                 cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 255), 2)
+     
 
-     cv2.imshow("DetectionInfo",im_with_keypoints)
+     cv2.imshow(variable,im_with_keypoints)
      pass
 
 # Functions for sea
-def detectSea(image, hsv_min, hsv_max):
-     # Convertir el fotograma a formato HSV
-    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+def detectSea(img): #Returns lowest point of sea and sea mask
+    blueHSV = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+    lowerBlue = np.array([88, 50, 20], np.uint8) #lower blue mask
+    upperBlue = np.array([125, 255, 255], np.uint8) #upper blue mask
 
-    # Crear una máscara para detectar los píxeles azules
-    mask = cv2.inRange(hsv, hsv_min, hsv_max)
+    kernel = np.ones((11, 11), np.uint8)
+    blueMask = cv2.inRange(blueHSV,lowerBlue,upperBlue)
+    opening = cv2.morphologyEx(blueMask, cv2.MORPH_OPEN, kernel, iterations=3)
+    closing = cv2.morphologyEx(opening, cv2.MORPH_CLOSE, kernel)
 
-    # Aplicar la máscara al fotograma original
-    res = cv2.bitwise_and(image, image, mask=mask)
-    kernel= cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(5,5))
-    np.array([[0, 0, 1, 0, 0],
-       [1, 1, 1, 1, 1],
-       [1, 1, 1, 1, 1],
-       [1, 1, 1, 1, 1],
-       [0, 0, 1, 0, 0]], dtype=np.uint8)
+    sea =  cv2.bitwise_and(img, img, mask=closing)
 
-    blurredframe = cv2.GaussianBlur(image, (5, 5), 0)
-    hsv_img = cv2.cvtColor(blurredframe, cv2.COLOR_BGR2HSV)
+    grayimg = cv2.cvtColor(sea, cv2.COLOR_BGR2GRAY)
+        # Detecting contours in image. 
+    contours, _= cv2.findContours(grayimg, cv2.RETR_TREE, 
+                                cv2.CHAIN_APPROX_SIMPLE) 
+    
 
-    mask = cv2.inRange(hsv_img, hsv_min, hsv_max)
-    mask = cv2.dilate(mask, None, iterations=1)
-    mask = cv2.erode(mask, None, iterations=1)
+    font = cv2.FONT_HERSHEY_COMPLEX
+    
+    #For storing y coordinates of sea
+    xcoordinates=[]
+    ycoordinates = []
+    # Going through every contours found in the image. 
+    for cnt in contours : 
 
-    mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel, iterations=1)
-    mask = cv2.medianBlur(mask, 9) #Applying blur to minimize noise
+        approx = cv2.approxPolyDP(cnt, 0.009 * cv2.arcLength(cnt, True), True) 
 
-    # Aplicar la detección de blobs
-    params = cv2.SimpleBlobDetector_Params()
+        # draws boundary of contours. 
+        cv2.drawContours(img, [approx], 0, (0, 0, 255), 5) 
 
-    params.minThreshold = 20
-    params.maxThreshold = 150
-    params.blobColor=255
- 
-    params.minDistBetweenBlobs = 20
-    params.minArea = 1000
-    params.maxArea=300000
-    params.minCircularity = 1
-    params.minConvexity = 0.8
-    params.minInertiaRatio = 0.001
+        # Used to flatted the array containing 
+        # the co-ordinates of the vertices. 
+        n = approx.ravel() 
+        i = 0
 
-    detector = cv2.SimpleBlobDetector_create(params)
 
-    keypoints = detector.detect(mask)
-    im_with_keypoints = cv2.drawKeypoints(res, keypoints, np.array([]), (0, 0, 255),
-                                          cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
+        for j in n : 
+            if(i % 2 == 0): 
+                x = n[i] 
+                y = n[i + 1]
+                xcoordinates.append(x) 
+                ycoordinates.append(y)    
+                columns = float(img.shape[1])
+                center_x    = 0.5*columns
+                xr = (x - center_x)/(center_x)
+                
+                # String containing the co-ordinates. 
+                string = str(x) + " " + str(y) 
 
-    # Mostrar la imagen resultante
-    cv2.imshow("blue",im_with_keypoints)
-    return keypoints, res
+                if(i == 0): 
+                    # text on topmost co-ordinate. 
+                    cv2.putText(img, "Arrow tip", (x, y), 
+                                    font, 0.5, (255, 0, 0)) 
+                else: 
+                    # text on remaining co-ordinates. 
+                    cv2.putText(img, string, (x, y), 
+                            font, 0.5, (0, 255, 0)) 
+            i = i + 1
+            
 
-def avoidSea(x,y,x_inflim,x_suplim):
+    return max(ycoordinates),min(xcoordinates), sea
+
+
+def avoidSea(x,y,x_inflim,x_suplim,h):
           x_instruction=""
           y_instruction=""
-          if y> 0: 
+          if y> h/2: 
                if x>= x_inflim and x <= x_suplim:
                     y_instruction = "Atras" 
                     vision= ("El mar está cerca y centrado")
@@ -241,11 +256,11 @@ def centerHoop(x,y,x_inflim, x_suplim):
           visionCan= ("Centered hoop in vision")
      else:
           if x > 0:
-               x_instruction = "Izquierda, "
-               visionCan= ("Hoop in the left")
-          else:
                x_instruction = "Derecha, "
                visionCan= ("Hoop in the right")
+          else:
+               x_instruction = "Izquierda, "
+               visionCan= ("Hoop in the left")
      
           if y < 0:
                y_instruction = " Hoop Arriba, avanza 1"
