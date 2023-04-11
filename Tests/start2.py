@@ -12,9 +12,6 @@ def main():
      hsv_min_black = (0, 0, 0)
      hsv_max_black = (180, 255, 30)
 
-     #For sea
-     hsv_min_blue = (99, 132, 90)
-     hsv_max_blue = (136, 255, 255)
 
      #For red circle
      hsv_min_red = (136, 150, 150)
@@ -27,7 +24,7 @@ def main():
      #Webcam video
      #vc = cv2.VideoCapture(0)
      ret=True
-     src = "PLAA4.jpg"
+     src = "Pruebaplaya.jpg"
      
      #Main loop
      while True:
@@ -36,36 +33,16 @@ def main():
           #ret, frame = vc.read()
           if ret == True:
                keypoints, reversemask = func.detectBlobs(frame, hsv_min_black, hsv_max_black)
-               keypointsb, res = func.detectSea(frame, hsv_min_blue, hsv_max_blue)
+               y,xr, res = func.detectSea(frame)
                keypointsc, mask= func.detectBlobs(frame, hsv_min_red, hsv_max_red)
                D = [] # list for distance of blobs
-               Y=[]# list for ys
+               Y=[100000]# list for ys
                instruction= "todo bien"
                visionSea= "no sea"
 
-               for keyPoint in keypointsb:
-                         
-                         x = keyPoint.pt[0]
-                         y = keyPoint.pt[1]
-                         s = keyPoint.size
-                         a = (math.pi*(s**2)) / 2
-                         y= y
-
-                         seainfo=(int(x),int(y),int(a),int(s))
-                         print(f"ssea = {int(s)} x = {int(x)}  y = {int(y)}  a = {int(a)}")
-                         x , y = func.getBlobRelativePosition(frame, keyPoint)
-
-                         Y.append(y)
-                         if y <= min(Y):
-                              #minimal x and y
-                              SX = int(x)
-                              SY = int(y)
-                              # Get instruction to center the can
-                              instruction, visionSea = func.avoidSea(x, y, -0.3, 0.3)
+               #Sea avoid
+               instruction, visionSea = func.avoidSea(xr, y, -0.3, 0.3,h)
                     
-
-                         print(visionSea)
-
                for keyPoint in keypoints:
 
                          x = keyPoint.pt[0]
@@ -100,13 +77,11 @@ def main():
                          func.draw_target(frame,(h,w),(fX,fY))
 
                          # Get the angle of current blob
-                         angle = func.getAngle(frame, (h,w), (fX,fY))
+                         anglecan = func.getAngle(frame, (h,w), (fX,fY))
 
                          # Show all the detection info in the frame
-                         func.showDetectionInfo(keypoints, frame, instructionCan, angle)
+                         func.showDetectionInfo(keypoints, frame, instructionCan, anglecan,"Cans detected: ")
 
-                         cv2.imshow("redmask", mask)
-                         print(visionCan)
                     
                
                for keyPoint in keypointsc:
@@ -122,21 +97,24 @@ def main():
 
                          xr, yr = func.getBlobRelativePosition(frame, keyPoint)
 
+                         fXr = int(xr)
+                         fYr =int(yr)
+
                          # Get instruction to center the can
-                         instructionhoop,visionhoop = func.centerHoop(fX, fY, -0.3, 0.3)
+                         instructionhoop,visionhoop = func.centerHoop(xr, yr, -0.3, 0.3)
                          print("Vision:" + visionCan+","+visionSea+","+visionhoop)
                          
 
                          if instruction== "todo bien" and instructionCan== "Centered,Avanza 1":
                             print(instructionhoop)
 
-                         func.draw_target(frame,(h,w),(fX,fY))
+                         func.draw_target(frame,(h,w),(fXr, fYr))
 
                          # Get the angle of current blob
-                         angle = func.getAngle(frame, (h,w), (fX,fY))
+                         anglehoop = func.getAngle(frame, (h,w), (fXr, fYr))
 
                          # Show all the detection info in the frame
-                         func.showDetectionInfo(keypoints, frame, instructionCan, angle)
+                         func.showDetectionInfo(keypointsc, frame, instructionhoop, anglehoop,"Hoop detected: ")
 
 
                
