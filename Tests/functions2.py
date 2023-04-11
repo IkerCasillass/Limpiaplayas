@@ -166,8 +166,8 @@ def showDetectionInfo(keypoints, frame, instruction, angle,variable, line_color=
 # Functions for sea
 def detectSea(img): #Returns lowest point of sea and sea mask
     blueHSV = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-    lowerBlue = np.array([88, 50, 20], np.uint8) #lower blue mask
-    upperBlue = np.array([125, 255, 255], np.uint8) #upper blue mask
+    lowerBlue = np.array([90, 153, 0], np.uint8) #lower blue mask
+    upperBlue = np.array([120, 255, 255], np.uint8) #upper blue mask
 
     kernel = np.ones((11, 11), np.uint8)
     blueMask = cv2.inRange(blueHSV,lowerBlue,upperBlue)
@@ -202,6 +202,7 @@ def detectSea(img): #Returns lowest point of sea and sea mask
 
 
         for j in n : 
+            
             if(i % 2 == 0): 
                 x = n[i] 
                 y = n[i + 1]
@@ -214,14 +215,6 @@ def detectSea(img): #Returns lowest point of sea and sea mask
                 # String containing the co-ordinates. 
                 string = str(x) + " " + str(y) 
 
-                if(i == 0): 
-                    # text on topmost co-ordinate. 
-                    cv2.putText(img, "Arrow tip", (x, y), 
-                                    font, 0.5, (255, 0, 0)) 
-                else: 
-                    # text on remaining co-ordinates. 
-                    cv2.putText(img, string, (x, y), 
-                            font, 0.5, (0, 255, 0)) 
             i = i + 1
             
 

@@ -205,7 +205,13 @@ def detectSea(img, shape): #Returns lowest point of sea and sea mask
                 if(i == 0): 
                     # text on topmost co-ordinate. 
                     cv2.putText(img, "Arrow tip", (x, y), 
-                                    font, 0.5, (255, 0, 0)) 
+                                    font, 0.5, (255, 0, 0))
+                    
+                elif(i == len(n)):
+                    # text on topmost co-ordinate. 
+                    cv2.putText(img, "Bottom", (x, y), 
+                                    font, 0.5, (255, 0, 0))
+                 
 
                 else: 
                     # text on remaining co-ordinates. 
