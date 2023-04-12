@@ -242,7 +242,7 @@ def avoidSea(x,y,x_inflim,x_suplim,h):
      
           return instruction, vision
     
-
+    
 def centerHoop(x,y,x_inflim, x_suplim):
      if x >= x_inflim and x <= x_suplim:
           instruction = "Centered, drop can"
