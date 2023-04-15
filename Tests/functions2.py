@@ -5,6 +5,7 @@ import numpy as np
 import math
 
 #Functions for blob detection
+#Comentario
 
 def detectBlobs(image, hsv_min, hsv_max):
 
