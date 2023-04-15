@@ -92,7 +92,7 @@ void loop()
     forward();
   }
   else if(msg == "backward"){
-    backward()
+    backward();
   }
   else if(msg == "turnR"){
     turnRight();  
