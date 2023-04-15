@@ -6,6 +6,7 @@ import math
 import functions2 as func# Our own functions file
 
 def main():
+
      #Color range for detection!!
 
      #For cans
@@ -22,15 +23,15 @@ def main():
      w = 640
 
      #Webcam video
-     #vc = cv2.VideoCapture(0)
-     ret=True
-     src = "Pruebaplaya.jpg"
-     
+     vc = cv2.VideoCapture(0)
+     #ret=True
+     #src = "Pruebaplaya.jpg"
+     collectedCans=0
      #Main loop
      while True:
-          frame = cv2.imread(src,1)
+          #frame = cv2.imread(src,1)
 
-          #ret, frame = vc.read()
+          ret, frame = vc.read()
           if ret == True:
                keypoints, reversemask = func.detectBlobs(frame, hsv_min_black, hsv_max_black)
                y,xr, res = func.detectSea(frame)
@@ -68,11 +69,8 @@ def main():
                               fY =int(y)
                               # Get instruction to center the can
                               instructionCan,visionCan = func.centerCan(xr, yr, -0.3, 0.3)
-                         
-                         if instruction== "todo bien":
-                            print(instructionCan)
-                         else:
-                            print(instruction)  
+                              if instructionCan =="Centered":
+                                   instructionCan,visionCan,collectedCans = func.collectCan(yr,collectedCans)
 
                          func.draw_target(frame,(h,w),(fX,fY))
 
@@ -81,8 +79,7 @@ def main():
 
                          # Show all the detection info in the frame
                          func.showDetectionInfo(keypoints, frame, instructionCan, anglecan,"Cans detected: ")
-
-                    
+         
                
                for keyPoint in keypointsc:
 
@@ -101,12 +98,10 @@ def main():
                          fYr =int(yr)
 
                          # Get instruction to center the can
+                         hoop=1
                          instructionhoop,visionhoop = func.centerHoop(xr, yr, -0.3, 0.3)
                          print("Vision:" + visionCan+","+visionSea+","+visionhoop)
-                         
 
-                         if instruction== "todo bien" and instructionCan== "Centered,Avanza 1":
-                            print(instructionhoop)
 
                          func.draw_target(frame,(h,w),(fXr, fYr))
 
@@ -117,12 +112,22 @@ def main():
                          func.showDetectionInfo(keypointsc, frame, instructionhoop, anglehoop,"Hoop detected: ")
 
 
+               if instruction== "todo bien":
+                    print(instructionCan)
+                    if collectedCans== 1 and hoop==1:
+                         print(instructionhoop)
+          
+
+               else:
+                             print(instruction) 
+
+          
+
                
                if cv2.waitKey(50) == 27:
                     break
 
      cv2.destroyAllWindows()
-
 
 if __name__ == "__main__":
      main()
