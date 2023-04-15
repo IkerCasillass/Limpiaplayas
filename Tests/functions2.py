@@ -76,31 +76,34 @@ def getBlobRelativePosition(frame, keyPoint):
     return(x,y)
      
 def centerCan(x,y,x_inflim, x_suplim):
-     y_instruction=""
      x_instruction=""
      if x >= x_inflim and x <= x_suplim:
           instruction = "Centered"
           visionCan= ("centered can in vision")
-
-          if y < 0:
-               y_instruction = ",Avanza 3"
-               visionCan= ("Can at the top")
-          else:
-               y_instruction = ",Avanza 1"
-               visionCan= ("Can at the bottom")
-
      else:
           if x > 0:
-               x_instruction = "Muevete a la Derecha, "
+               x_instruction = "Derecha, "
                visionCan= ("Can in the right")
      
           else:
-               x_instruction = "Muevete a la Izquierda, "
+               x_instruction = "Izquierda, "
                visionCan= ("Can in the left")
      
-          instruction = x_instruction + y_instruction
+          instruction = x_instruction 
      
      return instruction,visionCan
+
+def collectCan(y,collectedCans):
+     y_instruction=""
+     if y < 0:
+          y_instruction = ",Avanza"
+          visionCan= ("Can at the top")
+     else:
+          y_instruction = ",Avanza +1"
+          visionCan= ("Can at the bottom")
+          collectedCans =collectedCans+1
+     return y_instruction,visionCan,collectedCans
+
 
 def getAngle(frame, windowSize, point):
      # WindowSize = (h,w)    point = (x,y)
@@ -216,10 +219,11 @@ def detectSea(img): #Returns lowest point of sea and sea mask
                 string = str(x) + " " + str(y) 
 
             i = i + 1
-            
 
-    return max(ycoordinates),min(xcoordinates), sea
-
+    if len(ycoordinates) != 0:
+          return max(ycoordinates),min(xcoordinates), sea
+    else:
+          return -1,-1, sea
 
 def avoidSea(x,y,x_inflim,x_suplim,h):
           x_instruction=""
@@ -246,20 +250,23 @@ def avoidSea(x,y,x_inflim,x_suplim,h):
 def centerHoop(x,y,x_inflim, x_suplim):
      if x >= x_inflim and x <= x_suplim:
           instruction = "Centered, drop can"
-          visionCan= ("Centered hoop in vision")
+          visionHoop= ("Centered hoop in vision")
      else:
           if x > 0:
-               x_instruction = "Derecha, "
-               visionCan= ("Hoop in the right")
+               instruction = "Derecha, "
+               visionHoop= ("Hoop in the right")
           else:
-               x_instruction = "Izquierda, "
-               visionCan= ("Hoop in the left")
+               instruction = "Izquierda, "
+               visionHoop= ("Hoop in the left")
      
-          if y < 0:
-               y_instruction = " Hoop Arriba, avanza 1"
+     return instruction, visionHoop
+     
+def depositHoop(x,y,x_inflim, x_suplim):
+     if y < 0:
+               y_instruction = "Avanza 1"
                visionCan= ("Hoop far")
-          else:
-               y_instruction = "Hoop Abajo, retrocede 1"
-          instruction = x_instruction + y_instruction
-
+     else:
+               y_instruction = "Retrocede 1"
+               instruction = y_instruction
+               
      return instruction,visionCan
