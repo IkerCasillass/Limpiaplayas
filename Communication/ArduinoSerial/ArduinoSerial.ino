@@ -8,6 +8,7 @@ void setup() {
 
 void loop() {
   readSerialPort();
+  msg.replace("\n", "");
 
   if (msg == "data") {
     sendData();

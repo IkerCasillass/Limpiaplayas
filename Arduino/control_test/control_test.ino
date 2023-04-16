@@ -84,6 +84,7 @@ void setup()
 void loop()
 {
   readSerialPort();
+  msg.replace("\n", "");
 
   if (msg == "stop") {
     robot_stop();
