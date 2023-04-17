@@ -122,9 +122,12 @@ def main():
 
                print("Vision:" + visionCan+","+visionSea+","+visionhoop)
                if instruction== "todo bien":
-                    print("Can instruction: " + str(instructionCan))
-                    if collectedCans== 1 and hoop==1:
+                    if len(keypoints)==0:
+                         print("No cans detected rotate")
+                    elif collectedCans== 1 and hoop==1:
                          print("Hoop deposit: "+instructionhoop)
+                    else:
+                         print("Can instruction: " + str(instructionCan))
 
                else:
                              print("Sea avoid: " + instruction) 
