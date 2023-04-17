@@ -42,7 +42,7 @@ def main():
                Y=[100000]# list for ys
                instruction= "todo bien"
                visionSea= "no sea"
-
+               detectedCans=(str(len(keypoints)))
                #Sea avoid
                rows = float(frame.shape[0])
                cols = float(frame.shape[1])
@@ -121,8 +121,9 @@ def main():
 
 
                print("Vision:" + visionCan+","+visionSea+","+visionhoop)
+               print(detectedCans)
                if instruction== "todo bien":
-                    if len(keypoints)==0:
+                    if detectedCans==0:
                          print("No cans detected rotate")
                     elif collectedCans== 1 and hoop==1:
                          print("Hoop deposit: "+instructionhoop)
