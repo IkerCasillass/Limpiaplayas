@@ -229,7 +229,7 @@ def detectSea(img): #Returns lowest point of sea and sea mask
 def avoidSea(x,y,x_inflim,x_suplim,h):
           x_instruction=""
           y_instruction=""
-          if y> h/2: 
+          if y >0: 
                if x>= x_inflim and x <= x_suplim:
                     y_instruction = "Atras" 
                     vision= ("El mar está cerca y centrado")

@@ -25,8 +25,10 @@ def main():
      #Webcam video
      vc = cv2.VideoCapture(0)
      #ret=True
-     #src = "Pruebaplaya.jpg"
-     collectedCans=0
+     #src = "PLAA4.jpg"
+     collectedCans=hoop=0
+     instruction= instructionCan= instructionhoop=0
+     visionCan=visionSea=visionhoop=""
      #Main loop
      while True:
           #frame = cv2.imread(src,1)
@@ -34,7 +36,7 @@ def main():
           ret, frame = vc.read()
           if ret == True:
                keypoints, reversemask = func.detectBlobs(frame, hsv_min_black, hsv_max_black)
-               y,xr, res = func.detectSea(frame)
+               y,x, res = func.detectSea(frame)
                keypointsc, mask= func.detectBlobs(frame, hsv_min_red, hsv_max_red)
                D = [] # list for distance of blobs
                Y=[100000]# list for ys
@@ -42,7 +44,14 @@ def main():
                visionSea= "no sea"
 
                #Sea avoid
-               instruction, visionSea = func.avoidSea(xr, y, -0.3, 0.3,h)
+               rows = float(frame.shape[0])
+               cols = float(frame.shape[1])
+               center_x    = 0.5*cols
+               center_y    = 0.5*rows
+               xr = (x - center_x)/(center_x)
+               yr = (y - center_y)/(center_y)
+
+               instruction, visionSea = func.avoidSea(xr, yr, -0.3, 0.3,h)
                     
                for keyPoint in keypoints:
 
@@ -100,7 +109,6 @@ def main():
                          # Get instruction to center the can
                          hoop=1
                          instructionhoop,visionhoop = func.centerHoop(xr, yr, -0.3, 0.3)
-                         print("Vision:" + visionCan+","+visionSea+","+visionhoop)
 
 
                          func.draw_target(frame,(h,w),(fXr, fYr))
@@ -112,14 +120,14 @@ def main():
                          func.showDetectionInfo(keypointsc, frame, instructionhoop, anglehoop,"Hoop detected: ")
 
 
+               print("Vision:" + visionCan+","+visionSea+","+visionhoop)
                if instruction== "todo bien":
-                    print(instructionCan)
+                    print("Can instruction: " + str(instructionCan))
                     if collectedCans== 1 and hoop==1:
-                         print(instructionhoop)
-          
+                         print("Hoop deposit: "+instructionhoop)
 
                else:
-                             print(instruction) 
+                             print("Sea avoid: " + instruction) 
 
           
 
