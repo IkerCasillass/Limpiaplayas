@@ -1,4 +1,4 @@
-//Arduino pseudo control by comands Limpiaplayas TMR 2023
+//Arduino pseudo control by commands Limpiaplayas TMR 2023
 
 #include <Servo.h>
 Servo FR; //front right servo
@@ -61,7 +61,7 @@ void setup()
 
   //Servos all set to standby position calibrate range
   //front right
-  FR.attach(2);
+  FR.attach(9);
   FR.write(90); 
   //front left
   FL.attach(3);
@@ -78,7 +78,6 @@ void setup()
 
   //serial begin
   Serial.begin(9600);  
-  robot_stop();
 }
 
 void loop()
@@ -88,6 +87,17 @@ void loop()
 
   if (msg == "stop") {
     robot_stop();
+
+  else if(msg == "turnR"){
+    turnRight();  
+  }
+  else if(msg == "turnL"){
+    turnLeft();
+  }
+  else if (msg == "align"){
+    alinear();
+  }
+
   }
   else if(msg == "forward"){
     forward();
@@ -95,12 +105,7 @@ void loop()
   else if(msg == "backward"){
     backward();
   }
-  else if(msg == "turnR"){
-    turnRight();  
-  }
-  else if(msg == "turnL"){
-    turnLeft();
-  }
+
   
   delay(500);
   
@@ -126,8 +131,12 @@ void sendData() {
 }
 
 //BASIC MOVEMENT
-void backward()
-{
+void backward(){
+  //Align servos
+  align();
+  delay(500);
+
+  
   //Motor1 front left
   analogWrite(FLM, 100);
   digitalWrite(RPWM1, LOW);
@@ -146,8 +155,11 @@ void backward()
   digitalWrite(LPWM4, HIGH);
 }
 
-void forward()
-{
+void forward(){
+
+  align();
+  delay(500);
+
   //Motor1 front left
   analogWrite(FLM, 100);
   digitalWrite(RPWM1, HIGH);
@@ -169,7 +181,7 @@ void forward()
 void turnRight(){
 
   //front right
-  FR.write(180); 
+  FR.write(180);
   //front left
   FL.write(90);
   //back right
@@ -196,7 +208,7 @@ void turnRight(){
 }
 
 void turnLeft(){
-  
+
   //front right
   FR.write(180); 
   //front left
@@ -242,4 +254,27 @@ void robot_stop()
   analogWrite(BRM, 100);
   digitalWrite(RPWM4, LOW);
   digitalWrite(LPWM4, LOW);
+}
+
+void align(){
+  Serial.print("Align");
+
+  //Servos all set to standby position calibrate range
+  //front right
+  FR.attach(9);
+  FR.write(90); 
+
+  //front left
+  FL.attach(3);
+  FL.write(0);
+  //back right
+  BR.attach(4);
+  BR.write(90);
+  //back left
+  BL.attach(5);
+  BL.write(90);
+
+  //door servo
+  door.attach(6);
+  door.write(0);
 }
