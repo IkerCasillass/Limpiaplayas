@@ -61,19 +61,19 @@ void setup()
 
   //Servos all set to standby position calibrate range
   //front right
-  FR.attach(9);
+  FR.attach(5);
   FR.write(90); 
   //front left
-  FL.attach(3);
-  FL.write(0);
+  FL.attach(6);
+  FL.write(90);
   //back right
-  BR.attach(4);
+  BR.attach(3);
   BR.write(90);
   //back left
-  BL.attach(5);
+  BL.attach(4);
   BL.write(90);
   //door servo
-  door.attach(6);
+  door.attach(2);
   door.write(0);
 
   //serial begin
@@ -86,23 +86,26 @@ void loop()
   msg.replace("\n", "");
 
   if (msg == "stop") {
+    sendData();
     robot_stop();
 
-  else if(msg == "turnR"){
+  }else if(msg == "turnR"){
+    sendData();
     turnRight();  
   }
   else if(msg == "turnL"){
+    sendData();
     turnLeft();
   }
   else if (msg == "align"){
-    alinear();
-  }
-
+    align();
   }
   else if(msg == "forward"){
+    sendData();
     forward();
   }
   else if(msg == "backward"){
+    sendData();
     backward();
   }
 
@@ -126,7 +129,7 @@ void readSerialPort() {
 void sendData() {
   //write data
   Serial.print(nom);
-  Serial.print(" Angle set to: ");
+  Serial.print(" doing: ");
   Serial.print(msg);
 }
 
@@ -181,9 +184,9 @@ void forward(){
 void turnRight(){
 
   //front right
-  FR.write(180);
+  FR.write(180); 
   //front left
-  FL.write(90);
+  FL.write(0);
   //back right
   BR.write(90);
   //back left
@@ -212,7 +215,7 @@ void turnLeft(){
   //front right
   FR.write(180); 
   //front left
-  FL.write(90);
+  FL.write(0);
   //back right
   BR.write(90);
   //back left
@@ -238,6 +241,7 @@ void turnLeft(){
 
 void robot_stop()
 {
+  
   //Motor1 front left
   analogWrite(FLM, 100);
   digitalWrite(RPWM1, LOW);
@@ -261,20 +265,14 @@ void align(){
 
   //Servos all set to standby position calibrate range
   //front right
-  FR.attach(9);
   FR.write(90); 
-
   //front left
-  FL.attach(3);
-  FL.write(0);
+  FL.write(90);
   //back right
-  BR.attach(4);
   BR.write(90);
   //back left
-  BL.attach(5);
   BL.write(90);
 
   //door servo
-  door.attach(6);
   door.write(0);
 }
