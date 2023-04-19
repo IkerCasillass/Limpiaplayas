@@ -3,6 +3,7 @@
 import cv2
 import numpy as np
 import math
+import serial, time
 
 #Functions for blob detection
 #Comentario
@@ -104,7 +105,6 @@ def collectCan(y,collectedCans):
           visionCan= ("Can at the bottom")
           collectedCans =collectedCans+1
      return y_instruction,visionCan,collectedCans
-
 
 def getAngle(frame, windowSize, point):
      # WindowSize = (h,w)    point = (x,y)
@@ -271,3 +271,20 @@ def depositHoop(x,y,x_inflim, x_suplim):
                instruction = y_instruction
                
      return instruction,visionCan
+
+def arduinoMessage(cmd, arduino):
+
+     # with serial.Serial("/dev/ttyACM0", 9600, timeout=1) as arduino:
+          time.sleep(0.1) #wait for serial to open
+          if arduino.isOpen():
+               print("{} connected!".format(arduino.port))
+               try:
+                    arduino.write(cmd.encode())
+                    #time.sleep(0.1) #wait for arduino to answer
+                    while arduino.inWaiting()==0: pass
+                    if  arduino.inWaiting()>0: 
+                         answer=arduino.readline()
+                         print(answer)
+                         arduino.flushInput() #remove data after reading
+               except KeyboardInterrupt:
+                print("KeyboardInterrupt has been caught.")
