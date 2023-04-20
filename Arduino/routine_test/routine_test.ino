@@ -65,13 +65,13 @@ void setup()
   FR.write(90); 
   //front left
   FL.attach(6);
-  FL.write(90);
+  FL.write(95);
   //back right
   BR.attach(3);
-  BR.write(90);
+  BR.write(95);
   //back left
   BL.attach(4);
-  BL.write(90);
+  BL.write(75);
   //door servo
   door.attach(2);
   door.write(0);
@@ -136,9 +136,6 @@ void sendData() {
 
 //BASIC MOVEMENT
 void backward(){
-  //Align servos
-  align();
-  delay(500);
 
   
   //Motor1 front left
@@ -161,8 +158,6 @@ void backward(){
 
 void forward(){
 
-  align();
-  delay(500);
 
   //Motor1 front left
   analogWrite(FLM, 100);
@@ -183,23 +178,25 @@ void forward(){
 }
 
 void turnRight(){
+
   // turn engine
-  //Motor1 front left
+   //Motor1 front left
   analogWrite(FLM, 50);
   digitalWrite(RPWM1, HIGH);
   digitalWrite(LPWM1, LOW);
   //Motor2 front right
   analogWrite(FRM, 50);
-  digitalWrite(RPWM2, LOW);
-  digitalWrite(LPWM2, HIGH);
+  digitalWrite(RPWM2, HIGH);
+  digitalWrite(LPWM2, LOW);
   //Motor3 back left
   analogWrite(BLM, 50);
   digitalWrite(RPWM3, LOW);
   digitalWrite(LPWM3, HIGH);
   //Motor4 back right
   analogWrite(BRM, 50);
-  digitalWrite(RPWM4, HIGH);
-  digitalWrite(LPWM4, LOW);
+  digitalWrite(RPWM4, LOW);
+  digitalWrite(LPWM4, HIGH);
+
   
   //smooth axis wheel
   //index for decrement
@@ -216,30 +213,48 @@ void turnRight(){
     j-=5;
     delay(100);
   }
-
-  
+  delay(100);  
+  // Iniciar giro
+  //Motor1 front left
+  analogWrite(FLM, 50);
+  digitalWrite(RPWM1, HIGH);
+  digitalWrite(LPWM1, LOW);
+  //Motor2 front right
+  analogWrite(FRM, 50);
+  digitalWrite(RPWM2, LOW);
+  digitalWrite(LPWM2, HIGH);
+  //Motor3 back left
+  analogWrite(BLM, 50);
+  digitalWrite(RPWM3, LOW);
+  digitalWrite(LPWM3, HIGH);
+  //Motor4 back right
+  analogWrite(BRM, 50);
+  digitalWrite(RPWM4, HIGH);
+  digitalWrite(LPWM4, LOW);
  
 }
 
 void turnLeft(){
 
-
-   //Motor1 front left
+  // turn engine
+    //Motor1 front left
   analogWrite(FLM, 50);
-  digitalWrite(RPWM1, LOW);
-  digitalWrite(LPWM1, HIGH);
+  digitalWrite(RPWM1, HIGH);
+  digitalWrite(LPWM1, LOW);
   //Motor2 front right
   analogWrite(FRM, 50);
   digitalWrite(RPWM2, HIGH);
   digitalWrite(LPWM2, LOW);
   //Motor3 back left
   analogWrite(BLM, 50);
-  digitalWrite(RPWM3, HIGH);
-  digitalWrite(LPWM3, LOW);
+  digitalWrite(RPWM3, LOW);
+  digitalWrite(LPWM3, HIGH);
   //Motor4 back right
-  analogWrite(BRM,50);
+  analogWrite(BRM, 50);
   digitalWrite(RPWM4, LOW);
   digitalWrite(LPWM4, HIGH);
+
+   
 
   //smooth axis wheel
   //index for decrement
@@ -256,6 +271,24 @@ void turnLeft(){
     j-=5;
     delay(100);
     }
+  delay(100);
+  // Inica giro izquierda
+  //Motor1 front left
+  analogWrite(FLM, 50);
+  digitalWrite(RPWM1, LOW);
+  digitalWrite(LPWM1, HIGH);
+  //Motor2 front right
+  analogWrite(FRM, 50);
+  digitalWrite(RPWM2, HIGH);
+  digitalWrite(LPWM2, LOW);
+  //Motor3 back left
+  analogWrite(BLM, 50);
+  digitalWrite(RPWM3, HIGH);
+  digitalWrite(LPWM3, LOW);
+  //Motor4 back right
+  analogWrite(BRM,50);
+  digitalWrite(RPWM4, LOW);
+  digitalWrite(LPWM4, HIGH);
 }
 
 void robot_stop()
@@ -284,12 +317,12 @@ void align(){
 
   //Motor1 front left
   analogWrite(FLM, 50);
-  digitalWrite(RPWM1, HIGH);
-  digitalWrite(LPWM1, LOW);
+  digitalWrite(RPWM1, LOW);
+  digitalWrite(LPWM1, HIGH);
   //Motor2 front right
   analogWrite(FRM, 50);
-  digitalWrite(RPWM2, HIGH);
-  digitalWrite(LPWM2, LOW);
+  digitalWrite(RPWM2, LOW);
+  digitalWrite(LPWM2, HIGH);
   //Motor3 back left
   analogWrite(BLM, 50);
   digitalWrite(RPWM3, HIGH);
@@ -299,22 +332,22 @@ void align(){
   digitalWrite(RPWM4, HIGH);
   digitalWrite(LPWM4, LOW);
 
-  //smooth axis wheel
+ //smooth axis wheel
   //index for decrement
-  int j = 90;
-  for(int i=90; i<180; i+=5){
+  int j = 0;
+  for(int i=180; i>=90; i-=5){
     //front right
-    FR.write(j); 
+    FR.write(i); 
     //front left
-    FL.write(i);
+    FL.write(j);
     //back right
-    BR.write(i);
+    BR.write(j);
     //back left
-    BL.write(j);
-    j-=5;
+    BL.write(i);
+    j+=5;
     delay(100);
-
+  }
   //door servo
   door.write(0);
-  }
+  robot_stop();
 }
