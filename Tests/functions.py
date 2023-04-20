@@ -238,7 +238,12 @@ def avoidSea(point, windowSize, frame):
           print("izquierda")
           return "izquierda"
     
-    
+def detectHoop(img):
+    imgHSV = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+    hsv_min_red = np.array([90, 153, 0], np.uint8) #lower blue mask
+    hsv_max_red = np.array([120, 255, 255], np.uint8) #upper blue mask
+
+
 def centerHoop(x,y,x_inflim, x_suplim):
      if x >= x_inflim and x <= x_suplim:
           instruction = "Centered, drop can"
