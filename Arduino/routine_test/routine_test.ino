@@ -90,22 +90,22 @@ void loop()
     sendData();
     robot_stop();
 
-  }else if(msg == "turnR"){
+  }else if(msg == "tr"){
     sendData();
     turnRight();  
   }
-  else if(msg == "turnL"){
+  else if(msg == "tl"){
     sendData();
     turnLeft();
   }
-  else if (msg == "align"){
+  else if (msg == "a"){
     align();
   }
-  else if(msg == "forward"){
+  else if(msg == "f"){
     sendData();
     forward();
   }
-  else if(msg == "backward"){
+  else if(msg == "b"){
     sendData();
     backward();
   }

@@ -65,13 +65,13 @@ void setup()
   FR.write(90); 
   //front left
   FL.attach(6);
-  FL.write(90);
+  FL.write(95);
   //back right
   BR.attach(3);
-  BR.write(90);
+  BR.write(95);
   //back left
   BL.attach(4);
-  BL.write(90);
+  BL.write(75);
   //door servo
   door.attach(2);
   door.write(0);
@@ -82,32 +82,76 @@ void setup()
 
 void loop()
 {
+  
   readSerialPort();
   msg.replace("\n", "");
 
-  if (msg == "stop") {
-    sendData();
-    robot_stop();
+  int msg;
+  switch(msg){
+    case 1:
+      sendData();
+      robot_stop();
+    case 2:
+      sendData();
+      turnRight();  
+    case 3:
+      sendData();
+      turnRight();
+    case 4:
+      align();
+    case 5:
+      sendData();
+      forward();
+    case 6:
+      sendData();
+      backward();
+  }
 
-  }else if(msg == "turnR"){
+<<<<<<< HEAD
+  }else if(msg == "tr"){
     sendData();
     turnRight();  
   }
-  else if(msg == "turnL"){
+  else if(msg == "tl"){
     sendData();
     turnLeft();
   }
-  else if (msg == "align"){
+  else if (msg == "a"){
     align();
   }
-  else if(msg == "forward"){
+  else if(msg == "f"){
     sendData();
     forward();
   }
-  else if(msg == "backward"){
+  else if(msg == "b"){
     sendData();
     backward();
   }
+=======
+  // if (msg == "stop") {
+  //   sendData();
+  //   robot_stop();
+
+  // }else if(msg == "turnR"){
+  //   sendData();
+  //   turnRight();  
+  // }
+  // else if(msg == "turnL"){
+  //   sendData();
+  //   turnLeft();
+  // }
+  // else if (msg == "align"){
+  //   align();
+  // }
+  // else if(msg == "forward"){
+  //   sendData();
+  //   forward();
+  // }
+  // else if(msg == "backward"){
+  //   sendData();
+  //   backward();
+  // }
+>>>>>>> 7ac28c16711de8675b3e413cc7d558e450458150
 
   
   delay(500);
@@ -135,9 +179,6 @@ void sendData() {
 
 //BASIC MOVEMENT
 void backward(){
-  //Align servos
-  align();
-  delay(500);
 
   
   //Motor1 front left
@@ -160,8 +201,6 @@ void backward(){
 
 void forward(){
 
-  align();
-  delay(500);
 
   //Motor1 front left
   analogWrite(FLM, 100);
@@ -183,15 +222,42 @@ void forward(){
 
 void turnRight(){
 
-  //front right
-  FR.write(180); 
-  //front left
-  FL.write(0);
-  //back right
-  BR.write(90);
-  //back left
-  BL.write(90);
+  // turn engine
+   //Motor1 front left
+  analogWrite(FLM, 50);
+  digitalWrite(RPWM1, HIGH);
+  digitalWrite(LPWM1, LOW);
+  //Motor2 front right
+  analogWrite(FRM, 50);
+  digitalWrite(RPWM2, HIGH);
+  digitalWrite(LPWM2, LOW);
+  //Motor3 back left
+  analogWrite(BLM, 50);
+  digitalWrite(RPWM3, LOW);
+  digitalWrite(LPWM3, HIGH);
+  //Motor4 back right
+  analogWrite(BRM, 50);
+  digitalWrite(RPWM4, LOW);
+  digitalWrite(LPWM4, HIGH);
+
   
+  //smooth axis wheel
+  //index for decrement
+  int j = 90;
+  for(int i=90; i<180; i+=5){
+    //front right
+    FR.write(i); 
+    //front left
+    FL.write(j);
+    //back right
+    BR.write(j);
+    //back left
+    BL.write(i);
+    j-=5;
+    delay(100);
+  }
+  delay(100);  
+  // Iniciar giro
   //Motor1 front left
   analogWrite(FLM, 50);
   digitalWrite(RPWM1, HIGH);
@@ -201,27 +267,56 @@ void turnRight(){
   digitalWrite(RPWM2, LOW);
   digitalWrite(LPWM2, HIGH);
   //Motor3 back left
-  analogWrite(BLM, 100);
+  analogWrite(BLM, 50);
   digitalWrite(RPWM3, LOW);
-  digitalWrite(LPWM3, LOW);
+  digitalWrite(LPWM3, HIGH);
   //Motor4 back right
-  analogWrite(BRM, 100);
-  digitalWrite(RPWM4, LOW);
+  analogWrite(BRM, 50);
+  digitalWrite(RPWM4, HIGH);
   digitalWrite(LPWM4, LOW);
+ 
 }
 
 void turnLeft(){
 
-  //front right
-  FR.write(180); 
-  //front left
-  FL.write(0);
-  //back right
-  BR.write(90);
-  //back left
-  BL.write(90);
+  // turn engine
+    //Motor1 front left
+  analogWrite(FLM, 50);
+  digitalWrite(RPWM1, HIGH);
+  digitalWrite(LPWM1, LOW);
+  //Motor2 front right
+  analogWrite(FRM, 50);
+  digitalWrite(RPWM2, HIGH);
+  digitalWrite(LPWM2, LOW);
+  //Motor3 back left
+  analogWrite(BLM, 50);
+  digitalWrite(RPWM3, LOW);
+  digitalWrite(LPWM3, HIGH);
+  //Motor4 back right
+  analogWrite(BRM, 50);
+  digitalWrite(RPWM4, LOW);
+  digitalWrite(LPWM4, HIGH);
 
-   //Motor1 front left
+   
+
+  //smooth axis wheel
+  //index for decrement
+  int j = 90;
+  for(int i=90; i<180; i+=5){
+    //front right
+    FR.write(i); 
+    //front left
+    FL.write(j);
+    //back right
+    BR.write(j);
+    //back left
+    BL.write(i);
+    j-=5;
+    delay(100);
+    }
+  delay(100);
+  // Inica giro izquierda
+  //Motor1 front left
   analogWrite(FLM, 50);
   digitalWrite(RPWM1, LOW);
   digitalWrite(LPWM1, HIGH);
@@ -230,13 +325,13 @@ void turnLeft(){
   digitalWrite(RPWM2, HIGH);
   digitalWrite(LPWM2, LOW);
   //Motor3 back left
-  analogWrite(BLM, 100);
-  digitalWrite(RPWM3, LOW);
+  analogWrite(BLM, 50);
+  digitalWrite(RPWM3, HIGH);
   digitalWrite(LPWM3, LOW);
   //Motor4 back right
-  analogWrite(BRM, 100);
+  analogWrite(BRM,50);
   digitalWrite(RPWM4, LOW);
-  digitalWrite(LPWM4, LOW);
+  digitalWrite(LPWM4, HIGH);
 }
 
 void robot_stop()
@@ -263,16 +358,39 @@ void robot_stop()
 void align(){
   Serial.print("Align");
 
-  //Servos all set to standby position calibrate range
-  //front right
-  FR.write(90); 
-  //front left
-  FL.write(90);
-  //back right
-  BR.write(90);
-  //back left
-  BL.write(90);
+  //Motor1 front left
+  analogWrite(FLM, 50);
+  digitalWrite(RPWM1, LOW);
+  digitalWrite(LPWM1, HIGH);
+  //Motor2 front right
+  analogWrite(FRM, 50);
+  digitalWrite(RPWM2, LOW);
+  digitalWrite(LPWM2, HIGH);
+  //Motor3 back left
+  analogWrite(BLM, 50);
+  digitalWrite(RPWM3, HIGH);
+  digitalWrite(LPWM3, LOW);
+  //Motor4 back right
+  analogWrite(BRM, 50);
+  digitalWrite(RPWM4, HIGH);
+  digitalWrite(LPWM4, LOW);
 
+ //smooth axis wheel
+  //index for decrement
+  int j = 0;
+  for(int i=180; i>=90; i-=5){
+    //front right
+    FR.write(i); 
+    //front left
+    FL.write(j);
+    //back right
+    BR.write(j);
+    //back left
+    BL.write(i);
+    j+=5;
+    delay(100);
+  }
   //door servo
   door.write(0);
+  robot_stop();
 }
