@@ -86,10 +86,28 @@ void loop()
   readSerialPort();
   msg.replace("\n", "");
 
-  if (msg == "stop") {
-    sendData();
-    robot_stop();
+  int msg;
+  switch(msg){
+    case 1:
+      sendData();
+      robot_stop();
+    case 2:
+      sendData();
+      turnRight();  
+    case 3:
+      sendData();
+      turnRight();
+    case 4:
+      align();
+    case 5:
+      sendData();
+      forward();
+    case 6:
+      sendData();
+      backward();
+  }
 
+<<<<<<< HEAD
   }else if(msg == "tr"){
     sendData();
     turnRight();  
@@ -109,6 +127,31 @@ void loop()
     sendData();
     backward();
   }
+=======
+  // if (msg == "stop") {
+  //   sendData();
+  //   robot_stop();
+
+  // }else if(msg == "turnR"){
+  //   sendData();
+  //   turnRight();  
+  // }
+  // else if(msg == "turnL"){
+  //   sendData();
+  //   turnLeft();
+  // }
+  // else if (msg == "align"){
+  //   align();
+  // }
+  // else if(msg == "forward"){
+  //   sendData();
+  //   forward();
+  // }
+  // else if(msg == "backward"){
+  //   sendData();
+  //   backward();
+  // }
+>>>>>>> 7ac28c16711de8675b3e413cc7d558e450458150
 
   
   delay(500);
