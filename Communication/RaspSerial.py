@@ -16,20 +16,21 @@ if __name__ == '__main__':
             cmd = 'led1'
             try:
                 while True:
-                    #cmd=str(input("Enter command : "))
-                    if cmd == 'led0':
+                    cmd=str(input("Enter command : "))
+                    '''if cmd == 'led0':
                         arduino.write(cmd.encode())
                         cmd = 'led1'
                     else:
                         arduino.write(cmd.encode())
                         cmd='led0'
-                    #arduino.write(cmd.encode())
+                        '''
+                    arduino.write(cmd.encode())
                     time.sleep(0.1) #wait for arduino to answer
-                    #while arduino.inWaiting()==0: pass
-                    #if  arduino.inWaiting()>0:
+                    while arduino.inWaiting()==0: pass
+                    if  arduino.inWaiting()>0:
                      
-                    answer=arduino.readline()
-                    print(answer)
-                    arduino.flushInput() #remove data after reading
+                        answer=arduino.readline()
+                        print(answer)
+                        arduino.flushInput() #remove data after reading
             except KeyboardInterrupt:
                 print("KeyboardInterrupt has been caught.")

@@ -3,13 +3,13 @@
 import cv2
 import numpy as np
 import math
-import serial, time
+import serial, time 
 
 # mathematical funtions
 def getAngle(frame, windowSize, point):
      # WindowSize = (h,w)    point = (x,y)
-     h = windowSize[0]
-     w = windowSize[1]
+     h = windowSize[1]
+     w = windowSize[0]
 
      topPoint = (int(w/2),0)
      bottomPoint = (int(w/2), h)
@@ -132,8 +132,8 @@ def draw_target(frame, windowSize, point):
      if point[0] == 0 or point[1] == 0:
           return
      # Start coordinate at the bottom of the image (w/2, 0)
-     h = windowSize[0]
-     w = windowSize[1]
+     h = windowSize[1]
+     w = windowSize[0]
      start_point = (int(w/2), h)
      
      # End coordinate, blob
@@ -309,16 +309,10 @@ def depositHoop(y, h, collectedCans):
      return message, collectedCans
 
 # Serial communication
-def arduinoMessage(cmd, arduino):
-     
-     #print("{} connected!".format(arduino.port))
-     try:
-          arduino.write(cmd.encode())
-          time.sleep(0.1) #wait for arduino to answer
-          while arduino.inWaiting()==0: pass
-          if  arduino.inWaiting()>0: 
-               answer=arduino.readline()
-               print(answer)
-               arduino.flushInput() #remove data after reading
-     except KeyboardInterrupt:
-          print("KeyboardInterrupt has been caught.")
+def arduinoMessage(cmd,arduino):
+
+     arduino.write(cmd.encode())
+     time.sleep(0.2) #wait for arduino to answer
+     answer=str(arduino.readline())
+     print(answer)
+     arduino.flushInput() #remove data after reading
