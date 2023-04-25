@@ -86,19 +86,19 @@ void loop()
   readSerialPort();
   msg.replace("\n", "");
 
-  if (msg == 'D') {
+  if (msg == "D") {
     sendDebbugData("Right");
     robot_stop();
 
-  }else if(msg == 'I'){
+  }else if(msg == "I"){
     sendDebbugData("Left");
     turnRight();  
   }
-  else if(msg == 'C'){
+  else if(msg == "C"){
     sendDebbugData("blob centered");
     turnLeft();
   }
-  else if (msg == 'B'){
+  else if (msg == "B"){
     sendDebbugData("looking");
     forward();
   }
@@ -126,7 +126,7 @@ void sendData() {
   Serial.print(msg);
 }
 
-void sendDebbugData(cmd) {
+void sendDebbugData(String cmd) {
   //write data
   Serial.print(nom);
   Serial.print(" doing: ");
@@ -349,16 +349,16 @@ void align(){
   robot_stop();
 }
 
-void open() { // open gate
+void deposit() { // open gate
   for (int i = 0; i<90; i++){
-    myservo.write(i); 
+    door.write(i); 
     delay(20);
   }
 
   delay(5000);
 
   for (int i = 90; i>0; i--){
-    myservo.write(i); 
+    door.write(i); 
     delay(20);
   }
 }
