@@ -86,30 +86,22 @@ void loop()
   readSerialPort();
   msg.replace("\n", "");
 
-  if (msg == "stop") {
-    sendData();
+  if (msg == 'D') {
+    sendDebbugData("Right");
     robot_stop();
 
-  }else if(msg == "tr"){
-    sendData();
+  }else if(msg == 'I'){
+    sendDebbugData("Left");
     turnRight();  
   }
-  else if(msg == "tl"){
-    sendData();
+  else if(msg == 'C'){
+    sendDebbugData("blob centered");
     turnLeft();
   }
-  else if (msg == "a"){
-    align();
-  }
-  else if(msg == "f"){
-    sendData();
+  else if (msg == 'B'){
+    sendDebbugData("looking");
     forward();
   }
-  else if(msg == "b"){
-    sendData();
-    backward();
-  }
-
   
   delay(500);
   
@@ -132,6 +124,13 @@ void sendData() {
   Serial.print(nom);
   Serial.print(" doing: ");
   Serial.print(msg);
+}
+
+void sendDebbugData(cmd) {
+  //write data
+  Serial.print(nom);
+  Serial.print(" doing: ");
+  Serial.print(cmd);
 }
 
 //BASIC MOVEMENT
