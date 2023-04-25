@@ -1,21 +1,23 @@
 # !usr/bin/python
 # Standard imports
-import cv2
+import cv2 
 from math import pi, sqrt
 import functions as func# Our own functions file
 import serial, time
 
 
-def main():
+def main(): 
 
      # Arduino port
      # with serial.Serial("/dev/ttyACM0", 9600, timeout=1) as arduino:
      arduino = serial.Serial("/dev/ttyACM0", 9600, timeout=1)
      time.sleep(0.1) #wait for serial to open
+     msg = '' #empty message
 
      #Window size
-     h = 480
-     w = 640
+     #h = 480
+     #w = 640
+     winSize = (640,480) #width,height (x,y)
 
      #Webcam video
      vc = cv2.VideoCapture(0)
@@ -29,12 +31,12 @@ def main():
 
           ret, frame = vc.read()
 
-          if ret == True:
+          if ret:
                keypoints, reversemask = func.detectCans(frame)
                seaCoordinate, sea = func.detectSea(frame)
                
-               if seaCoordinate != (-1,-1):
-                    msgAvoid = func.arduinoMessage()
+               #if seaCoordinate != (-1,-1):
+                    #msg = func.arduinoMessage()
                
                D = [] # list for distance of blobs
 
@@ -53,7 +55,7 @@ def main():
                     #print(f"scan = {int(s)} x = {int(x)}  y = {int(y)}  a = {int(a)}")
           
                     # Determine minimum distance
-                    dist = sqrt( (x - int(w/2))**2 + (y - h)**2 )
+                    dist = sqrt( (x - int(winSize[0]/2))**2 + (y - winSize[1])**2 )
                     
                     D.append(dist)
                     
@@ -63,7 +65,7 @@ def main():
                          fX = int(x)
                          fY = int(y)
 
-                         anglecan = func.getAngle(frame, (h,w), (fX,fY))
+                         anglecan = func.getAngle(frame, winSize, (fX,fY))
                          # Get instruction to center the can
                          msg = func.centerCan(anglecan)
                     

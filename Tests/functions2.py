@@ -105,7 +105,7 @@ def collectCan(y,collectedCans):
           visionCan= ("Can at the bottom")
           collectedCans =collectedCans+1
      return y_instruction,visionCan,collectedCans
-
+ 
 def getAngle(frame, windowSize, point):
      # WindowSize = (h,w)    point = (x,y)
      h = windowSize[0]
@@ -272,9 +272,9 @@ def depositHoop(x,y,x_inflim, x_suplim):
                
      return instruction,visionCan
 
-def arduinoMessage(cmd, arduino):
+def arduinoMessage(cmd):
 
-     # with serial.Serial("/dev/ttyACM0", 9600, timeout=1) as arduino:
+      with serial.Serial("/dev/ttyACM0", 9600, timeout=1) as arduino:
           time.sleep(0.1) #wait for serial to open
           if arduino.isOpen():
                print("{} connected!".format(arduino.port))
