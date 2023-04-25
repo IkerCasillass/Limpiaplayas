@@ -12,7 +12,7 @@ def arduinoMessage(cmd):
         time.sleep(0.1) #wait for serial to open
         if arduino.isOpen():
             print("{} connected!".format(arduino.port))
-            try:
+            try: 
                 while True:
                     arduino.write(cmd.encode())
                     #time.sleep(0.1) #wait for arduino to answer
