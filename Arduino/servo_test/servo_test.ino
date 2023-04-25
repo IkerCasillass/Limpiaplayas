@@ -4,7 +4,7 @@ String msg;
 String nom = "Arduino";
 
 void setup() {
-  myservo.attach(9);
+  myservo.attach(2);
   myservo.write(0); 
   delay(1000);
 }
@@ -17,12 +17,12 @@ void loop() {
 }
 
 void calibration(){
-  for (int i = 0; i<180; i++){
+  for (int i = 0; i<90; i++){
     myservo.write(i); 
     delay(20);
   }
   delay(1000);
-  for (int i = 180; i>0; i--){
+  for (int i = 90; i>0; i--){
     myservo.write(i); 
     delay(20);
   }

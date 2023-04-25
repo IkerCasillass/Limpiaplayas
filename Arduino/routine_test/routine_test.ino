@@ -347,7 +347,19 @@ void align(){
     j+=5;
     delay(100);
   }
-  //door servo
-  door.write(0);
   robot_stop();
+}
+
+void open() { // open gate
+  for (int i = 0; i<90; i++){
+    myservo.write(i); 
+    delay(20);
+  }
+
+  delay(5000);
+
+  for (int i = 90; i>0; i--){
+    myservo.write(i); 
+    delay(20);
+  }
 }
