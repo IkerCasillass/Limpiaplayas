@@ -96,42 +96,46 @@ def detectCans(image):
      return keypoints, reversemask
 
 def get_Cans(img, shape):
-    h = shape[1]
-    w = shape[0]
+     h = shape[1]
+     w = shape[0]
 
-    # convert the image to grayscale
-    gray_image = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    blur = cv2.GaussianBlur(gray_image,(11,11),cv2.BORDER_DEFAULT)
+     # convert the image to grayscale
+     gray_image = img.copy()
+     gray_image = cv2.cvtColor(gray_image, cv2.COLOR_BGR2GRAY)
+     blur = cv2.GaussianBlur(gray_image,(11,11),cv2.BORDER_DEFAULT)
 
-    # convert the grayscale image to binary image
-    thresh = cv2.threshold(blur,60,250,cv2.THRESH_BINARY_INV)[1]
-    
-    # find contours in the binary image
-    contours, _ = cv2.findContours(thresh,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
-    D = []
-    for c in contours:
-        # calculate moments for each contour
-        M = cv2.moments(c)
-        if M["m00"]!=0:
-          # calculate x,y coordinate of center
-          cX = int(M["m10"] / M["m00"])
-          cY = int(M["m01"] / M["m00"])
-        else:
-          cX = 0
-          cY = 0
-        cv2.circle(img, (cX, cY), 5, (255, 255, 255), -1)
-        #cv.putText(img, "centroid", (cX - 25, cY - 25),cv.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
-        dist = math.sqrt( (cX - int(w/2))**2 + (cY - h)**2 )
-        D.append(dist)
-        if dist <= min(D):
-          #minimal x and y
-          fX = cX
-          fY = cY
-          draw_target(img,(h,w),(fX,fY))
-
-    # display the image
-    #cv.imshow("Image", img)
-    cv2.imshow("thresh", thresh)
+     # convert the grayscale image to binary image
+     thresh = cv2.threshold(blur,60,250,cv2.THRESH_BINARY_INV)[1]
+     
+     # find contours in the binary image
+     contours = cv2.findContours(thresh,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)[0]
+     
+     D = []
+     if contours != []:
+          for c in contours:
+               # calculate moments for each contour
+               M = cv2.moments(c)
+               if M["m00"]!=0:
+                    # calculate x,y coordinate of center
+                    cX = int(M["m10"] / M["m00"])
+                    cY = int(M["m01"] / M["m00"])
+               else:
+                    cX = 0
+                    cY = 0
+               #cv2.circle(img, (cX, cY), 5, (255, 255, 255), -1)
+               #cv.putText(img, "centroid", (cX - 25, cY - 25),cv.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
+               dist = math.sqrt( (cX - int(w/2))**2 + (cY - h)**2 )
+               D.append(dist)
+               if dist <= min(D):
+                    #minimal x and y
+                    fX = cX
+                    fY = cY
+                    #draw all targets
+                    draw_target(img,(h,w),(fX,fY))
+          return (fX,fY), True
+     else:
+          return (-1,-1), False
+          
 
 def centerBlob(angle):
      rango = 20
@@ -267,18 +271,12 @@ def avoidSea(angle):
      # Checar si esta centrada
      
      if angle <= 90:
-          print("derecha")
-          return "derecha"
+          print(" mar derecha")
+          return "I"
      
      elif angle > 90:
-          print("izquierda")
-          return "izquierda"
-     
-     # #Checar si esta cerca
-     # if point(1)>2/3*h:
-     #      print("retrocede")
-     #      return "retroced"
-
+          print("mar izquierda")
+          return "D"
      
 # Hoop    
 def detectHoop(img):
@@ -320,7 +318,6 @@ def detectHoop(img):
                if(i % 2 == 0):
                     promX += n[i] 
                     y = n[i + 1]
-                    
 
                     # Obtener coordenada mas cercana al robot
                     if y > maxY:
@@ -338,13 +335,14 @@ def detectHoop(img):
      
 def depositHoop(y, h, collectedCans):
      message = ""
-
+     
+     #si se encuentra lejos que avance
      if y <= 2/3*h:
-          message = "Avanza"
+          message = "F"
 
-     # Si se encuentra suficientemente cerca
+     # Si se encuentra suficientemente cerca deposite en el hoop
      elif y > 2/3*h:
-          message = "Depositar"
+          message = "H"
           collectedCans = 0
 
      return message, collectedCans

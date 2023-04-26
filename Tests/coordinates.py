@@ -81,7 +81,7 @@ def get_blobs(img, shape):
                 #minimal x and y
                 fX = cX
                 fY = cY
-                draw_target(img,(h,w),(fX,fY))
+        draw_target(img,(h,w),(fX,fY))
 
     # display the image
     #cv.imshow("Image", img)
@@ -127,7 +127,7 @@ def get_angle(img, shape, point):
     X = point[0] - int(w/2)
     Y = point[1] - 0
     angle = m.atan2(Y,X) * (180.0 / m.pi)
-    msg = 'Angle: ' + str(angle)
+    msg = 'Angle: ' + str(round(angle,2))
     cv.putText(image, msg, (100, 50), cv.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 255), 2)
     cv.imshow('frame', image)
 

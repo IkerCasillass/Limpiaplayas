@@ -33,70 +33,27 @@ def main():
           cv2.imshow("image",frame)
           vc.set(cv2.CAP_PROP_FPS, 30)
           if ret:
-               keypoints, reversemask = func.detectCans(frame)
-               cv2.imshow("cans", reversemask)
+               #IDLE STATE
+               #Sea detection
                seaCoordinate, sea = func.detectSea(frame)
-               
+               # If sea is close enough
                if seaCoordinate[1] > winSize[1]/3:
-                    func.getAngle(winSize, seaCoordinate)
+                    # Get angle and send message to avoid sea
+                    seaAngle = func.getAngle(winSize, seaCoordinate)
+                    msg = func.avoidSea(seaAngle)
+                    func.arduinoMessage(msg, arduino)
+               #Can detection
+               canP, canFlag = func.get_Cans(frame, winSize)
+               #can detected
+               if canFlag:
+                    canAngle = func.getAngle(frame, canP)
+                    msg = func.centerBlob(canAngle)
+                    func.arduinoMessage(msg, arduino)
 
-                    func.avoidSea(seaCoordinate, winSize)
-                    #msg = func.arduinoMessage()
+
                
-               D = [] # list for distance of blobs
-
-               #print("Buscando")
-               #Sea avoid
-               #instruction, visionSea = func.avoidSea(xr, y, -0.3, 0.3,h)
-               if keypoints != []: 
-                   for keyPoint in keypoints:
-
-                       x = keyPoint.pt[0]
-                       y = keyPoint.pt[1]
-                       s = keyPoint.size
-                       a = (pi*(s**2)) / 2
-                    
-                    #Show blob info
-                    #print(f"scan = {int(s)} x = {int(x)}  y = {int(y)}  a = {int(a)}")
-          
-                       # Determine minimum distance
-                       dist = sqrt( (x - int(winSize[0]/2))**2 + (y - winSize[1])**2 )
-                    
-                       D.append(dist)
-                    
-
-                       if dist <= max(D):
-                         #minimal x and y
-                         fX = int(x)
-                         fY = int(y)
-
-<<<<<<< HEAD
-                         anglecan = func.getAngle( winSize, (fX,fY))
-=======
-                         anglecan = func.getAngle(frame, winSize, (fX,fY))
-                         func.draw_target(frame,winSize,(fX,fY))
->>>>>>> 53aa73f33127b0db2a77a641b2b71cec2406e994
-                         # Get instruction to center the can
-                         msg = func.centerBlob(anglecan)
-                         #print(msg)
-                         if msg != 'C':
-                              func.arduinoMessage(msg,arduino)
-                         elif msg == 'C':
-                              func.arduinoMessage(msg,arduino)
-               else: 
-                    func.arduinoMessage('B',arduino)
-               #func.arduinoMessage('B',arduino)    
-                    #
-                    #func.draw_target(frame,(h,w),(fX,fY))
-
-                    # Get the angle of current blob
-                    
-
-                    # Show all the detection info in the frame
-                    #func.showDetectionInfo(keypoints, frame, msg, anglecan,"Cans detected: ")
-                    #     
           if cv2.waitKey(50) == 27:
-                break
+               break
 
      cv2.destroyAllWindows()
 

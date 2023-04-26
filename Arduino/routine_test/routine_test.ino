@@ -87,19 +87,15 @@ void loop()
   msg.replace("\n", "");
 
   if (msg == "D") {
-    sendDebbugData("Right");
     robot_stop();
 
   }else if(msg == "I"){
-    sendDebbugData("Left");
     turnRight();  
   }
   else if(msg == "C"){
-    sendDebbugData("blob centered");
     turnLeft();
   }
   else if (msg == "B"){
-    sendDebbugData("looking");
     forward();
   }
   
