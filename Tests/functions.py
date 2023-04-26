@@ -78,7 +78,7 @@ def detectCans(image):
      #Definir Kernel para operaciones morfologicas (open - close)
      kernel = np.ones((5, 5), np.uint8)
 
-     blurredframe = cv2.GaussianBlur(image, kernel, 0)
+     blurredframe = cv2.GaussianBlur(image, (5,5), 0)
      hsv_img = cv2.cvtColor(blurredframe, cv2.COLOR_BGR2HSV)
 
      mask = cv2.inRange(hsv_img, hsv_min_black, hsv_max_black)
@@ -138,16 +138,16 @@ def centerBlob(angle):
 
      # Checar si esta centrada
      if angle < 90 + rango and angle > 90 -rango:
-          print("centered")     
-          return "centered"
+          #print("centered")     
+          return 'C'
      
      if angle < 90 - rango:
-          print("derecha")
-          return "derecha"
+          #print("derecha")
+          return 'D'
      
      elif angle > 90 + rango:
-          print("izquierda")
-          return "izquierda"
+          #print("izquierda")
+          return 'I'
      
 def collectCan(y, h, collectedCans):
      message = ""
@@ -185,7 +185,7 @@ def draw_target(frame, windowSize, point):
      # Draw a diagonal green line with thickness of 9 px
      image = cv2.line(frame, start_point, end_point, color, thickness)
 
-     pass
+     cv2.imshow("target",image)
 
 def showDetectionInfo(keypoints, frame, instruction, angle, variable, line_color=(0,0,255)):
      im_with_keypoints = cv2.drawKeypoints(frame
@@ -353,7 +353,7 @@ def depositHoop(y, h, collectedCans):
 def arduinoMessage(cmd,arduino):
 
      arduino.write(cmd.encode())
-     time.sleep(0.2) #wait for arduino to answer
-     answer=str(arduino.readline())
-     print(answer)
+     time.sleep(0.1) #wait for arduino to answer
+     #answer=str(arduino.readline())
+     #print(answer)
      arduino.flushInput() #remove data after reading 

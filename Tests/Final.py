@@ -12,7 +12,7 @@ def main():
      # with serial.Serial("/dev/ttyACM0", 9600, timeout=1) as arduino:
      arduino = serial.Serial("/dev/ttyACM0", 9600, timeout=1)
      time.sleep(0.1) #wait for serial to open
-     msg = 'buscando' #empty message
+     msg = 'B' #empty message
 
      #Window size
      #h = 480
@@ -30,9 +30,11 @@ def main():
      while arduino.isOpen():
 
           ret, frame = vc.read()
-
+          cv2.imshow("image",frame)
+          vc.set(cv2.CAP_PROP_FPS, 30)
           if ret:
                keypoints, reversemask = func.detectCans(frame)
+               cv2.imshow("cans", reversemask)
                seaCoordinate, sea = func.detectSea(frame)
                
                if seaCoordinate[1] > winSize[1]/3:
@@ -46,37 +48,44 @@ def main():
                #print("Buscando")
                #Sea avoid
                #instruction, visionSea = func.avoidSea(xr, y, -0.3, 0.3,h)
-                    
-               for keyPoint in keypoints:
+               if keypoints != []: 
+                   for keyPoint in keypoints:
 
-                    x = keyPoint.pt[0]
-                    y = keyPoint.pt[1]
-                    s = keyPoint.size
-                    a = (pi*(s**2)) / 2
+                       x = keyPoint.pt[0]
+                       y = keyPoint.pt[1]
+                       s = keyPoint.size
+                       a = (pi*(s**2)) / 2
                     
                     #Show blob info
                     #print(f"scan = {int(s)} x = {int(x)}  y = {int(y)}  a = {int(a)}")
           
-                    # Determine minimum distance
-                    dist = sqrt( (x - int(winSize[0]/2))**2 + (y - winSize[1])**2 )
+                       # Determine minimum distance
+                       dist = sqrt( (x - int(winSize[0]/2))**2 + (y - winSize[1])**2 )
                     
-                    D.append(dist)
+                       D.append(dist)
                     
 
-                    if dist <= min(D):
+                       if dist <= max(D):
                          #minimal x and y
                          fX = int(x)
                          fY = int(y)
 
+<<<<<<< HEAD
                          anglecan = func.getAngle( winSize, (fX,fY))
+=======
+                         anglecan = func.getAngle(frame, winSize, (fX,fY))
+                         func.draw_target(frame,winSize,(fX,fY))
+>>>>>>> 53aa73f33127b0db2a77a641b2b71cec2406e994
                          # Get instruction to center the can
                          msg = func.centerBlob(anglecan)
-                         if msg != "centered":
+                         #print(msg)
+                         if msg != 'C':
                               func.arduinoMessage(msg,arduino)
-                         elif msg == "centered":
+                         elif msg == 'C':
                               func.arduinoMessage(msg,arduino)
-
-               func.arduinoMessage(msg,arduino)    
+               else: 
+                    func.arduinoMessage('B',arduino)
+               #func.arduinoMessage('B',arduino)    
                     #
                     #func.draw_target(frame,(h,w),(fX,fY))
 
