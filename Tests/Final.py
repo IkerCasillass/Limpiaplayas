@@ -12,7 +12,7 @@ def main():
      # with serial.Serial("/dev/ttyACM0", 9600, timeout=1) as arduino:
      arduino = serial.Serial("/dev/ttyACM0", 9600, timeout=1)
      time.sleep(0.1) #wait for serial to open
-     msg = 'buscando' #empty message
+     msg = 'B' #empty message
 
      #Window size
      #h = 480
@@ -30,9 +30,11 @@ def main():
      while arduino.isOpen():
 
           ret, frame = vc.read()
-
+          cv2.imshow("image",frame)
+          vc.set(cv2.CAP_PROP_FPS, 30)
           if ret:
                keypoints, reversemask = func.detectCans(frame)
+               cv2.imshow("cans", reversemask)
                seaCoordinate, sea = func.detectSea(frame)
                
                #if seaCoordinate != (-1,-1):
@@ -68,9 +70,9 @@ def main():
                          anglecan = func.getAngle(frame, winSize, (fX,fY))
                          # Get instruction to center the can
                          msg = func.centerBlob(anglecan)
-                         if msg != "centered":
+                         if msg != 'C':
                               func.arduinoMessage(msg,arduino)
-                         elif msg == "centered":
+                         elif msg == 'C':
                               func.arduinoMessage(msg,arduino)
 
                func.arduinoMessage(msg,arduino)    
