@@ -351,7 +351,7 @@ def depositHoop(y, h, collectedCans):
 def arduinoMessage(cmd,arduino):
 
      arduino.write(cmd.encode())
-     time.sleep(0.1) #wait for arduino to answer
+     time.sleep(0.2) #wait for arduino to answer
      #answer=str(arduino.readline())
      #print(answer)
      arduino.flushInput() #remove data after reading 

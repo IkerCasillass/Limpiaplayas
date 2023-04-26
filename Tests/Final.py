@@ -25,6 +25,7 @@ def main():
      #check for conection
      if arduino.isOpen():
           print("{} connected!".format(arduino.port))
+          func.arduinoMessage(msg, arduino)
 
      #Main loop
      while arduino.isOpen():
@@ -36,22 +37,27 @@ def main():
                #IDLE STATE
                #Sea detection
                seaCoordinate, sea = func.detectSea(frame)
+               cv2.imshow("sea", sea)
                # If sea is close enough
                if seaCoordinate[1] > winSize[1]/3:
                     # Get angle and send message to avoid sea
                     seaAngle = func.getAngle(winSize, seaCoordinate)
                     msg = func.avoidSea(seaAngle)
+                    print("sea " + msg)
                     func.arduinoMessage(msg, arduino)
                #Can detection
                canP, canFlag = func.get_Cans(frame, winSize)
                #can detected
                if canFlag:
-                    canAngle = func.getAngle(frame, canP)
+                    canAngle = func.getAngle(winSize, canP)
                     msg = func.centerBlob(canAngle)
+                    print("can " + msg)
                     func.arduinoMessage(msg, arduino)
+               if seaCoordinate == (-1,-1) and canFlag == False:
+                    func.arduinoMessage('B', arduino)
+                    print("looking")
+               #time.sleep(0.2)
 
-
-               
           if cv2.waitKey(50) == 27:
                break
 
