@@ -36,6 +36,8 @@ int BM = 11;
 int RPWM5 = 38;
 int LPWM5 = 40;
 
+int led = 13;
+
 void setup()
 {
   //Motor1 front left
@@ -59,19 +61,21 @@ void setup()
   pinMode(RPWM5, OUTPUT);
   pinMode(LPWM5, OUTPUT);
 
+  pinMode(LED_BUILTIN, OUTPUT);
+  pinMode(led, OUTPUT);
   //Servos all set to standby position calibrate range
   //front right
   FR.attach(5);
   FR.write(90); 
   //front left
   FL.attach(6);
-  FL.write(95);
+  FL.write(90);
   //back right
   BR.attach(3);
-  BR.write(95);
+  BR.write(90);
   //back left
   BL.attach(4);
-  BL.write(75);
+  BL.write(90);
   //door servo
   door.attach(2);
   door.write(0);
@@ -87,20 +91,20 @@ void loop()
   msg.replace("\n", "");
 
   if (msg == "D") {
-    sendDebbugData("Right");
-    robot_stop();
+    digitalWrite(LED_BUILTIN, HIGH);
+    //turnRight();
 
   }else if(msg == "I"){
-    sendDebbugData("Left");
-    turnRight();  
+    digitalWrite(LED_BUILTIN, HIGH);
+    //turnLeft();  
   }
   else if(msg == "C"){
-    sendDebbugData("blob centered");
-    turnLeft();
+    digitalWrite(led, HIGH);
+    forward();
   }
   else if (msg == "B"){
-    sendDebbugData("looking");
-    forward();
+    digitalWrite(led, LOW);
+    //forward();
   }
   
   delay(500);
@@ -126,12 +130,6 @@ void sendData() {
   Serial.print(msg);
 }
 
-void sendDebbugData(String cmd) {
-  //write data
-  Serial.print(nom);
-  Serial.print(" doing: ");
-  Serial.print(cmd);
-}
 
 //BASIC MOVEMENT
 void backward(){
