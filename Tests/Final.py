@@ -35,7 +35,10 @@ def main():
                keypoints, reversemask = func.detectCans(frame)
                seaCoordinate, sea = func.detectSea(frame)
                
-               #if seaCoordinate != (-1,-1):
+               if seaCoordinate[1] > winSize[1]/3:
+                    func.getAngle(winSize, seaCoordinate)
+
+                    func.avoidSea(seaCoordinate, winSize)
                     #msg = func.arduinoMessage()
                
                D = [] # list for distance of blobs
@@ -65,7 +68,7 @@ def main():
                          fX = int(x)
                          fY = int(y)
 
-                         anglecan = func.getAngle(frame, winSize, (fX,fY))
+                         anglecan = func.getAngle( winSize, (fX,fY))
                          # Get instruction to center the can
                          msg = func.centerBlob(anglecan)
                          if msg != "centered":

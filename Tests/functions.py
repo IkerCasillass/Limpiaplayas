@@ -6,15 +6,13 @@ import math
 import serial, time 
 
 # mathematical funtions
-def getAngle(frame, windowSize, point):
+def getAngle(windowSize, point):
      # WindowSize = (h,w)    point = (x,y)
      h = windowSize[1]
      w = windowSize[0]
 
      topPoint = (int(w/2),0)
      bottomPoint = (int(w/2), h)
-
-     frame = cv2.line(frame, bottomPoint, topPoint, (0,0,255), 2)
 
      X = point[0] - int(w/2)
      Y = point[1] - 0
@@ -96,6 +94,44 @@ def detectCans(image):
      keypoints = detector.detect(reversemask)
      
      return keypoints, reversemask
+
+def get_Cans(img, shape):
+    h = shape[1]
+    w = shape[0]
+
+    # convert the image to grayscale
+    gray_image = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    blur = cv2.GaussianBlur(gray_image,(11,11),cv2.BORDER_DEFAULT)
+
+    # convert the grayscale image to binary image
+    thresh = cv2.threshold(blur,60,250,cv2.THRESH_BINARY_INV)[1]
+    
+    # find contours in the binary image
+    contours, _ = cv2.findContours(thresh,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
+    D = []
+    for c in contours:
+        # calculate moments for each contour
+        M = cv2.moments(c)
+        if M["m00"]!=0:
+          # calculate x,y coordinate of center
+          cX = int(M["m10"] / M["m00"])
+          cY = int(M["m01"] / M["m00"])
+        else:
+          cX = 0
+          cY = 0
+        cv2.circle(img, (cX, cY), 5, (255, 255, 255), -1)
+        #cv.putText(img, "centroid", (cX - 25, cY - 25),cv.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
+        dist = math.sqrt( (cX - int(w/2))**2 + (cY - h)**2 )
+        D.append(dist)
+        if dist <= min(D):
+          #minimal x and y
+          fX = cX
+          fY = cY
+          draw_target(img,(h,w),(fX,fY))
+
+    # display the image
+    #cv.imshow("Image", img)
+    cv2.imshow("thresh", thresh)
 
 def centerBlob(angle):
      rango = 20
@@ -227,8 +263,7 @@ def detectSea(img): #Returns lowest point of sea and sea mask
     else:
          return (-1, -1), sea
     
-def avoidSea(point, windowSize, angle):
-     
+def avoidSea(angle):
      # Checar si esta centrada
      
      if angle <= 90:
@@ -238,6 +273,12 @@ def avoidSea(point, windowSize, angle):
      elif angle > 90:
           print("izquierda")
           return "izquierda"
+     
+     # #Checar si esta cerca
+     # if point(1)>2/3*h:
+     #      print("retrocede")
+     #      return "retroced"
+
      
 # Hoop    
 def detectHoop(img):
