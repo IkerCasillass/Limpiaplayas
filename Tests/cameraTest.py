@@ -11,13 +11,15 @@ def arduinoMessage(cmd,arduino):
      time.sleep(0.1) #wait for arduino to answer
      #answer=str(arduino.readline())
      #print(answer)
-     #arduino.flushInput() #remove data after reading 
+     arduino.flushInput() #remove data after reading 
      
 def main():
 
      # Arduino port
      arduino = serial.Serial("/dev/ttyACM0", 9600, timeout=1)
      # with serial.Serial("/dev/ttyACM0", 9600, timeout=1) as arduino:
+     if arduino.isOpen():
+          print("{} connected!".format(arduino.port))
 
      #Webcam video
      vc = cv2.VideoCapture(0)
@@ -33,8 +35,8 @@ def main():
               
               #cv2.imshow("60fps",frame)
               #vc.set(cv2.CAP_PROP_FPS, 60)
-			  
-              arduinoMessage('B',arduino)
+              #print('C')
+              arduinoMessage('C',arduino)
               #time.sleep(0.2)
 
                

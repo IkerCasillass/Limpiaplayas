@@ -149,7 +149,7 @@ def draw_target(frame, windowSize, point):
      # Draw a diagonal green line with thickness of 9 px
      image = cv2.line(frame, start_point, end_point, color, thickness)
 
-     pass
+     cv2.imshow("target",image)
 
 def showDetectionInfo(keypoints, frame, instruction, angle, variable, line_color=(0,0,255)):
      im_with_keypoints = cv2.drawKeypoints(frame

@@ -45,37 +45,40 @@ def main():
                #print("Buscando")
                #Sea avoid
                #instruction, visionSea = func.avoidSea(xr, y, -0.3, 0.3,h)
-                    
-               for keyPoint in keypoints:
+               if keypoints != []: 
+                   for keyPoint in keypoints:
 
-                    x = keyPoint.pt[0]
-                    y = keyPoint.pt[1]
-                    s = keyPoint.size
-                    a = (pi*(s**2)) / 2
+                       x = keyPoint.pt[0]
+                       y = keyPoint.pt[1]
+                       s = keyPoint.size
+                       a = (pi*(s**2)) / 2
                     
                     #Show blob info
                     #print(f"scan = {int(s)} x = {int(x)}  y = {int(y)}  a = {int(a)}")
           
-                    # Determine minimum distance
-                    dist = sqrt( (x - int(winSize[0]/2))**2 + (y - winSize[1])**2 )
+                       # Determine minimum distance
+                       dist = sqrt( (x - int(winSize[0]/2))**2 + (y - winSize[1])**2 )
                     
-                    D.append(dist)
+                       D.append(dist)
                     
 
-                    if dist <= min(D):
+                       if dist <= max(D):
                          #minimal x and y
                          fX = int(x)
                          fY = int(y)
 
                          anglecan = func.getAngle(frame, winSize, (fX,fY))
+                         func.draw_target(frame,winSize,(fX,fY))
                          # Get instruction to center the can
                          msg = func.centerBlob(anglecan)
+                         #print(msg)
                          if msg != 'C':
                               func.arduinoMessage(msg,arduino)
                          elif msg == 'C':
                               func.arduinoMessage(msg,arduino)
-
-               func.arduinoMessage(msg,arduino)    
+               else: 
+                    func.arduinoMessage('B',arduino)
+               #func.arduinoMessage('B',arduino)    
                     #
                     #func.draw_target(frame,(h,w),(fX,fY))
 
