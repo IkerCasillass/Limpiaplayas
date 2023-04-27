@@ -32,13 +32,13 @@ def main():
      while arduino.isOpen():
 
           ret, frame = vc.read()
-          cv2.imshow("image",frame)
-          vc.set(cv2.CAP_PROP_FPS, 30)
+          #cv2.imshow("image",frame)
+          #vc.set(cv2.CAP_PROP_FPS, 30)
           if ret:
                #IDLE STATE
                #Sea detection
                seaCoordinate, sea = func.detectSea(frame)
-               cv2.imshow("sea", sea)
+               #cv2.imshow("sea", sea)
                # If sea is close enough
                if seaCoordinate[1] > winSize[1]/3:
                     # Get angle and send message to avoid sea
@@ -57,7 +57,7 @@ def main():
                if seaCoordinate == (-1,-1) and canFlag == False:
                     func.arduinoMessage('L', arduino)
                     print("looking")
-               #time.sleep(0.2)
+               #time.sleep(1.0)
 
           if cv2.waitKey(50) == 27:
                break

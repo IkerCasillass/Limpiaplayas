@@ -131,7 +131,7 @@ def get_Cans(img, shape):
                     fX = cX
                     fY = cY
                     #draw all targets
-                    draw_target(img,(h,w),(fX,fY))
+                    #draw_target(img,(h,w),(fX,fY))
           return (fX,fY), True
      else:
           return (-1,-1), False
