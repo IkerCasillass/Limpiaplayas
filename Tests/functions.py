@@ -137,32 +137,47 @@ def get_Cans(img, shape):
           return (-1,-1), False
           
 
-def centerBlob(angle):
+def centerBlob(angle, type):
      rango = 20
 
-     # Checar si esta centrada
-     if angle < 90 + rango and angle > 90 -rango:
-          #print("centered")
-          # can centered -> Collect  
-          return 'C'
-     
-     if angle < 90 - rango:
-          #print("derecha")
-          return 'R'
-     
-     elif angle > 90 + rango:
-          #print("izquierda")
-          return 'L'
+     if type == "can": 
+          # Checar si esta centrada
+          if angle < 90 + rango and angle > 90 - rango:
+               #print("centered")
+               # can centered -> Collect  
+               return 'CC'
+          
+          if angle < 90 - rango: #can right
+               #print("derecha")
+               return 'CR'
+          
+          elif angle > 90 + rango: #can left
+               #print("izquierda")
+               return 'CL'
+     elif type == "hoop":
+          # Checar si esta centrado
+          if angle < 90 + rango and angle > 90 - rango: #hoop centered
+               #print("centered")
+               return 'HC'
+          
+          if angle < 90 - rango: #hoop right
+               #print("derecha")
+               return 'HR'
+          
+          elif angle > 90 + rango: #hoop left
+               #print("izquierda")
+               return 'HL'
+
      
 def collectCan(y, h, collectedCans):
      message = ""
 
-     if y < 2/3*h:
-          message = "Avanza"
+     if y < 2/3*h: #can detected
+          message = "CD"
 
      # Si se encuentra suficinetemente cerca
-     elif y > 2/3*h:
-          message = "Recoger"
+     elif y > 2/3*h: #can hard forward
+          message = "CF"
           collectedCans += 1
 
      return message, collectedCans
@@ -271,13 +286,13 @@ def detectSea(img): #Returns lowest point of sea and sea mask
 def avoidSea(angle):
      # Checar si esta centrada
      
-     if angle <= 90:
-          print(" mar derecha")
-          return "I"
+     if angle <= 90: #sea right
+          #print(" mar derecha")
+          return "SR"
      
-     elif angle > 90:
-          print("mar izquierda")
-          return "D"
+     elif angle > 90: #sea left
+          #print("mar izquierda")
+          return "SL"
      
 # Hoop    
 def detectHoop(img):
@@ -338,12 +353,12 @@ def depositHoop(y, h, collectedCans):
      message = ""
      
      #si se encuentra lejos que avance
-     if y <= 2/3*h:
-          message = "F"
+     if y <= 2/3*h: #hoop detected
+          message = "HD"
 
      # Si se encuentra suficientemente cerca deposite en el hoop
-     elif y > 2/3*h:
-          message = "H"
+     elif y > 2/3*h: #hoop throw (deposit)
+          message = "HT"
           collectedCans = 0
 
      return message, collectedCans
