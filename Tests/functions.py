@@ -142,16 +142,17 @@ def centerBlob(angle):
 
      # Checar si esta centrada
      if angle < 90 + rango and angle > 90 -rango:
-          #print("centered")     
+          #print("centered")
+          # can centered -> Collect  
           return 'C'
      
      if angle < 90 - rango:
           #print("derecha")
-          return 'D'
+          return 'R'
      
      elif angle > 90 + rango:
           #print("izquierda")
-          return 'I'
+          return 'L'
      
 def collectCan(y, h, collectedCans):
      message = ""
