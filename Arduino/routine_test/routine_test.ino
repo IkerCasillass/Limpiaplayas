@@ -36,8 +36,6 @@ int BM = 11;
 int RPWM5 = 38;
 int LPWM5 = 40;
 
-int led = 13;
-
 void setup()
 {
   //Motor1 front left
@@ -69,13 +67,13 @@ void setup()
   FR.write(90); 
   //front left
   FL.attach(6);
-  FL.write(90);
+  FL.write(95);
   //back right
   BR.attach(3);
-  BR.write(90);
+  BR.write(95);
   //back left
   BL.attach(4);
-  BL.write(90);
+  BL.write(75);
   //door servo
   door.attach(2);
   door.write(0);
