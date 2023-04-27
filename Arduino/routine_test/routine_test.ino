@@ -59,6 +59,8 @@ void setup()
   pinMode(RPWM5, OUTPUT);
   pinMode(LPWM5, OUTPUT);
 
+  pinMode(LED_BUILTIN, OUTPUT);
+  pinMode(led, OUTPUT);
   //Servos all set to standby position calibrate range
   //front right
   FR.attach(5);
@@ -87,16 +89,20 @@ void loop()
   msg.replace("\n", "");
 
   if (msg == "D") {
-    robot_stop();
+    digitalWrite(LED_BUILTIN, HIGH);
+    //turnRight();
 
   }else if(msg == "I"){
-    turnRight();  
+    digitalWrite(LED_BUILTIN, HIGH);
+    //turnLeft();  
   }
   else if(msg == "C"){
-    turnLeft();
+    digitalWrite(led, HIGH);
+    forward();
   }
   else if (msg == "B"){
-    forward();
+    digitalWrite(led, LOW);
+    //forward();
   }
   
   delay(500);
@@ -122,12 +128,6 @@ void sendData() {
   Serial.print(msg);
 }
 
-void sendDebbugData(String cmd) {
-  //write data
-  Serial.print(nom);
-  Serial.print(" doing: ");
-  Serial.print(cmd);
-}
 
 //BASIC MOVEMENT
 void backward(){

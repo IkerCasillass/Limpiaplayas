@@ -3,7 +3,8 @@
 import cv2 
 from math import pi, sqrt
 import functions as func# Our own functions file
-import serial, time
+import serial 
+import time
 
 
 def main(): 
@@ -54,7 +55,7 @@ def main():
                     print("can " + msg)
                     func.arduinoMessage(msg, arduino)
                if seaCoordinate == (-1,-1) and canFlag == False:
-                    func.arduinoMessage('B', arduino)
+                    func.arduinoMessage('L', arduino)
                     print("looking")
                #time.sleep(1.0)
 
