@@ -6,15 +6,13 @@ import math
 import serial, time 
 
 # mathematical funtions
-def getAngle(frame, windowSize, point):
+def getAngle(windowSize, point):
      # WindowSize = (h,w)    point = (x,y)
      h = windowSize[1]
      w = windowSize[0]
 
      topPoint = (int(w/2),0)
      bottomPoint = (int(w/2), h)
-
-     frame = cv2.line(frame, bottomPoint, topPoint, (0,0,255), 2)
 
      X = point[0] - int(w/2)
      Y = point[1] - 0
@@ -80,7 +78,7 @@ def detectCans(image):
      #Definir Kernel para operaciones morfologicas (open - close)
      kernel = np.ones((5, 5), np.uint8)
 
-     blurredframe = cv2.GaussianBlur(image, kernel, 0)
+     blurredframe = cv2.GaussianBlur(image, (5,5), 0)
      hsv_img = cv2.cvtColor(blurredframe, cv2.COLOR_BGR2HSV)
 
      mask = cv2.inRange(hsv_img, hsv_min_black, hsv_max_black)
@@ -97,21 +95,63 @@ def detectCans(image):
      
      return keypoints, reversemask
 
+def get_Cans(img, shape):
+     h = shape[1]
+     w = shape[0]
+
+     # convert the image to grayscale
+     gray_image = img.copy()
+     gray_image = cv2.cvtColor(gray_image, cv2.COLOR_BGR2GRAY)
+     blur = cv2.GaussianBlur(gray_image,(11,11),cv2.BORDER_DEFAULT)
+
+     # convert the grayscale image to binary image
+     thresh = cv2.threshold(blur,60,250,cv2.THRESH_BINARY_INV)[1]
+     
+     # find contours in the binary image
+     contours = cv2.findContours(thresh,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)[0]
+     
+     D = []
+     if contours != []:
+          for c in contours:
+               # calculate moments for each contour
+               M = cv2.moments(c)
+               if M["m00"]!=0:
+                    # calculate x,y coordinate of center
+                    cX = int(M["m10"] / M["m00"])
+                    cY = int(M["m01"] / M["m00"])
+               else:
+                    cX = 0
+                    cY = 0
+               #cv2.circle(img, (cX, cY), 5, (255, 255, 255), -1)
+               #cv.putText(img, "centroid", (cX - 25, cY - 25),cv.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
+               dist = math.sqrt( (cX - int(w/2))**2 + (cY - h)**2 )
+               D.append(dist)
+               if dist <= min(D):
+                    #minimal x and y
+                    fX = cX
+                    fY = cY
+                    #draw all targets
+                    draw_target(img,(h,w),(fX,fY))
+          return (fX,fY), True
+     else:
+          return (-1,-1), False
+          
+
 def centerBlob(angle):
      rango = 20
 
      # Checar si esta centrada
      if angle < 90 + rango and angle > 90 -rango:
-          print("centered")     
-          return "centered"
+          #print("centered")     
+          return 'C'
      
      if angle < 90 - rango:
-          print("derecha")
-          return "derecha"
+          #print("derecha")
+          return 'D'
      
      elif angle > 90 + rango:
-          print("izquierda")
-          return "izquierda"
+          #print("izquierda")
+          return 'I'
      
 def collectCan(y, h, collectedCans):
      message = ""
@@ -149,7 +189,7 @@ def draw_target(frame, windowSize, point):
      # Draw a diagonal green line with thickness of 9 px
      image = cv2.line(frame, start_point, end_point, color, thickness)
 
-     pass
+     cv2.imshow("target",image)
 
 def showDetectionInfo(keypoints, frame, instruction, angle, variable, line_color=(0,0,255)):
      im_with_keypoints = cv2.drawKeypoints(frame
@@ -227,17 +267,16 @@ def detectSea(img): #Returns lowest point of sea and sea mask
     else:
          return (-1, -1), sea
     
-def avoidSea(point, windowSize, angle):
-     
+def avoidSea(angle):
      # Checar si esta centrada
      
      if angle <= 90:
-          print("derecha")
-          return "derecha"
+          print(" mar derecha")
+          return "I"
      
      elif angle > 90:
-          print("izquierda")
-          return "izquierda"
+          print("mar izquierda")
+          return "D"
      
 # Hoop    
 def detectHoop(img):
@@ -279,7 +318,6 @@ def detectHoop(img):
                if(i % 2 == 0):
                     promX += n[i] 
                     y = n[i + 1]
-                    
 
                     # Obtener coordenada mas cercana al robot
                     if y > maxY:
@@ -297,13 +335,14 @@ def detectHoop(img):
      
 def depositHoop(y, h, collectedCans):
      message = ""
-
+     
+     #si se encuentra lejos que avance
      if y <= 2/3*h:
-          message = "Avanza"
+          message = "F"
 
-     # Si se encuentra suficientemente cerca
+     # Si se encuentra suficientemente cerca deposite en el hoop
      elif y > 2/3*h:
-          message = "Depositar"
+          message = "H"
           collectedCans = 0
 
      return message, collectedCans
@@ -313,6 +352,6 @@ def arduinoMessage(cmd,arduino):
 
      arduino.write(cmd.encode())
      time.sleep(0.2) #wait for arduino to answer
-     answer=str(arduino.readline())
-     print(answer)
+     #answer=str(arduino.readline())
+     #print(answer)
      arduino.flushInput() #remove data after reading 

@@ -62,25 +62,25 @@ def get_blobs(img, shape):
     # find contours in the binary image
     contours, hierarchy = cv.findContours(thresh,cv.RETR_TREE,cv.CHAIN_APPROX_SIMPLE)
     D = []
-    for c in contours:
-        # calculate moments for each contour
-        M = cv.moments(c)
-        if M["m00"]!=0:
-            # calculate x,y coordinate of center
-            cX = int(M["m10"] / M["m00"])
-            cY = int(M["m01"] / M["m00"])
-        else:
-            cX = 0
-            cY = 0
-        cv.circle(img, (cX, cY), 5, (255, 255, 255), -1)
-        #cv.putText(img, "centroid", (cX - 25, cY - 25),cv.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
-        dist = m.sqrt( (cX - int(w/2))**2 + (cY - h)**2 )
-        D.append(dist)
-        if dist <= min(D):
-            #minimal x and y
-            fX = cX
-            fY = cY
-    if fX != 0 and fY != 0:
+    if contours != []:
+        for c in contours:
+            # calculate moments for each contour
+            M = cv.moments(c)
+            if M["m00"]!=0:
+                # calculate x,y coordinate of center
+                cX = int(M["m10"] / M["m00"])
+                cY = int(M["m01"] / M["m00"])
+            else:
+                cX = 0
+                cY = 0
+            cv.circle(img, (cX, cY), 5, (255, 255, 255), -1)
+            #cv.putText(img, "centroid", (cX - 25, cY - 25),cv.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
+            dist = m.sqrt( (cX - int(w/2))**2 + (cY - h)**2 )
+            D.append(dist)
+            if dist <= min(D):
+                #minimal x and y
+                fX = cX
+                fY = cY
         draw_target(img,(h,w),(fX,fY))
 
     # display the image
@@ -127,7 +127,7 @@ def get_angle(img, shape, point):
     X = point[0] - int(w/2)
     Y = point[1] - 0
     angle = m.atan2(Y,X) * (180.0 / m.pi)
-    msg = 'Angle: ' + str(angle)
+    msg = 'Angle: ' + str(round(angle,2))
     cv.putText(image, msg, (100, 50), cv.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 255), 2)
     cv.imshow('frame', image)
 
