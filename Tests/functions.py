@@ -137,7 +137,7 @@ def get_Cans(img, shape):
           return (-1,-1), False
           
 
-def centerBlob(angle):
+def centerBlob(angle, type):
      rango = 20
 
      # Checar si esta centrada
@@ -216,8 +216,8 @@ def showDetectionInfo(keypoints, frame, instruction, angle, variable, line_color
 # Functions for sea
 def detectSea(img): #Returns lowest point of sea and sea mask
     blueHSV = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-    lowerBlue = np.array([90, 153, 0], np.uint8) #lower blue mask
-    upperBlue = np.array([120, 255, 255], np.uint8) #upper blue mask
+    lowerBlue = np.array([97, 83, 75], np.uint8) #lower blue mask
+    upperBlue = np.array([115, 255, 255], np.uint8) #upper blue mask
 
     kernel = np.ones((11, 11), np.uint8)
     blueMask = cv2.inRange(blueHSV,lowerBlue,upperBlue)
@@ -282,7 +282,7 @@ def avoidSea(angle):
 # Hoop    
 def detectHoop(img):
      imgHSV = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-     hsv_min_red = (169, 140, 0) #lower red mask
+     hsv_min_red = (176, 90, 118) #lower red mask
      hsv_max_red = (179, 255, 255) #upper red mask
 
      kernel = np.ones((11, 11), np.uint8)

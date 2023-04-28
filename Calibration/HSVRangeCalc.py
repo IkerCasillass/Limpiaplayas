@@ -5,8 +5,8 @@ def nothing(x):
     pass
 
 # image Path
-image = cv2.imread('HSVScale.png')
-
+image = cv2.imread('escenario1.jpeg')
+image = cv2.resize(image, (1000, 800))
 # Create a window
 cv2.namedWindow('image')
 
