@@ -100,17 +100,35 @@ def detectCans(image):
 def get_Cans(img, shape):
      h = shape[1]
      w = shape[0]
+     
+     imgCopy = img.copy()
+     imgHSV = cv2.cvtColor(imgCopy, cv2.COLOR_BGR2HSV)
+     hsv_min_black = np.array([0, 0, 0], np.uint8) #lower blue mask
+     hsv_max_black = np.array([179, 255, 77], np.uint8) #upper blue mask
+
+     kernel = np.ones((11, 11), np.uint8)
+     blackMask = cv2.inRange(imgHSV,hsv_min_black,hsv_max_black)
+     opening = cv2.morphologyEx(blackMask, cv2.MORPH_OPEN, kernel, iterations=3)
+     closing = cv2.morphologyEx(opening, cv2.MORPH_CLOSE, kernel)
+
+     cans =  cv2.bitwise_and(img, img, mask=closing)
+
+     grayimg = cv2.cvtColor(cans, cv2.COLOR_BGR2GRAY)
+     #cans = cv2.threshold(grayimg,20, 250 cv2.TRESH_BINARY_INV)[1]
+     #cv2.imshow("Cans", 255- cans)
 
      # convert the image to grayscale
-     gray_image = img.copy()
+     '''gray_image = img.copy()
      gray_image = cv2.cvtColor(gray_image, cv2.COLOR_BGR2GRAY)
      blur = cv2.GaussianBlur(gray_image,(11,11),cv2.BORDER_DEFAULT)
 
      # convert the grayscale image to binary image
-     thresh = cv2.threshold(blur,60,250,cv2.THRESH_BINARY_INV)[1]
+     thresh = cv2.threshold(blur,20,250,cv2.THRESH_BINARY_INV)[1]
+     
+    # cv2.imshow("cans", thresh)'''
      
      # find contours in the binary image
-     contours = cv2.findContours(thresh,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)[0]
+     contours = cv2.findContours(grayimg,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)[0]
      
      D = []
      if contours != []:
@@ -190,31 +208,47 @@ def get_CansNP(img, shape):
           
 
 def centerBlob(angle, type):
-     rango = 20
+     rango = 32
 
-     # Checar si esta centrada
-     if angle < 90 + rango and angle > 90 -rango:
-          #print("centered")
-          # can centered -> Collect  
-          return 'C'
+     if type == "can":
+
+          # Checar si esta centrada
+          if angle < 90 + rango and angle > 90 -rango:
+               #print("centered")
+               # can centered -> Collect  
+               return 'CC'
      
-     if angle < 90 - rango:
-          #print("derecha")
-          return 'R'
+          if angle < 90 - rango:
+               #print("derecha")
+               return 'CR'
      
-     elif angle > 90 + rango:
-          #print("izquierda")
-          return 'L'
+          elif angle > 90 + rango:
+               #print("izquierda")
+               return 'CL'
+               
+     elif type == "hoop":
+          # Checar si esta centrado
+          if angle < 90 + rango and angle > 90 -rango:  # hoop centered
+               # print(centered)
+               return 'HC'
+          if angle < 90 - rango: # hoop right
+               # print(derecha)
+               return 'HR'
+
+          elif angle > 90 + rango: # hoop left
+               #print(izquierda)
+               return 'HL'
+
      
 def collectCan(y, h, collectedCans):
      message = ""
 
-     if y < 2/3*h:
-          message = "Avanza"
+     if y < 2/3*h: #can detected
+          message = "CD"
 
      # Si se encuentra suficinetemente cerca
-     elif y > 2/3*h:
-          message = "Recoger"
+     elif y > 2/3*h: #can hard forward
+          message = "CF"
           collectedCans += 1
 
      return message, collectedCans
@@ -268,8 +302,8 @@ def showDetectionInfo(keypoints, frame, instruction, angle, variable, line_color
 # Functions for sea
 def detectSea(img): #Returns lowest point of sea and sea mask
     blueHSV = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-    lowerBlue = np.array([97, 83, 75], np.uint8) #lower blue mask
-    upperBlue = np.array([115, 255, 255], np.uint8) #upper blue mask
+    lowerBlue = np.array([87, 66, 144], np.uint8) #lower blue mask
+    upperBlue = np.array([107, 255, 255], np.uint8) #upper blue mask
 
     kernel = np.ones((11, 11), np.uint8)
     blueMask = cv2.inRange(blueHSV,lowerBlue,upperBlue)
@@ -323,19 +357,19 @@ def detectSea(img): #Returns lowest point of sea and sea mask
 def avoidSea(angle):
      # Checar si esta centrada
      
-     if angle <= 90:
-          print(" mar derecha")
-          return "I"
+     if angle <= 90: #sea right
+          #print(" mar derecha")
+          return "SR"
      
-     elif angle > 90:
-          print("mar izquierda")
-          return "D"
+     elif angle > 90: #sea left
+          #print("mar izquierda")
+          return "SL"
      
 # Hoop    
 def detectHoop(img):
      imgHSV = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-     hsv_min_red = (176, 90, 118) #lower red mask
-     hsv_max_red = (179, 255, 255) #upper red mask
+     hsv_min_red = (0, 173, 0) #lower red mask
+     hsv_max_red = (179, 255, 176) #upper red mask
 
      kernel = np.ones((11, 11), np.uint8)
      redMask = cv2.inRange(imgHSV,hsv_min_red,hsv_max_red)
@@ -386,19 +420,18 @@ def detectHoop(img):
      else:
           return (-1, -1), hoop
      
-def depositHoop(y, h, collectedCans):
+def depositHoop(y, h):
      message = ""
      
      #si se encuentra lejos que avance
-     if y <= 2/3*h:
-          message = "F"
+     if y <= 2/3*h: # hoop detected
+          message = "HD"
 
      # Si se encuentra suficientemente cerca deposite en el hoop
-     elif y > 2/3*h:
-          message = "H"
-          collectedCans = 0
+     elif y > 2/3*h: #hoop throw (deposit)
+          message = "HT"
 
-     return message, collectedCans
+     return message
 
 # Serial communication
 def arduinoMessage(cmd,arduino):
