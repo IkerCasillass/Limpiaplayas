@@ -11,7 +11,7 @@ def main():
 
      # Arduino port
      # with serial.Serial("/dev/ttyACM0", 9600, timeout=1) as arduino:
-     arduino = serial.Serial("/dev/ttyACM0", 9600, timeout=1)
+     arduino = serial.Serial("/dev/COM3", 9600, timeout=1)
      time.sleep(0.1) #wait for serial to open
      msg = 'B' #empty message
 

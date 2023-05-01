@@ -191,12 +191,12 @@ def centerBlob(angle, type):
 def collectCan(y, h, collectedCans):
      message = ""
 
-     if y < 2/3*h:
-          message = 'CD'
+     if y < 2/3*h: #can detected
+          message = "CD"
 
      # Si se encuentra suficinetemente cerca
-     elif y > 2/3*h:
-          message = 'CF'
+     elif y > 2/3*h: #can hard forward
+          message = "CF"
           collectedCans += 1
 
      return message, collectedCans
@@ -305,12 +305,13 @@ def detectSea(img): #Returns lowest point of sea and sea mask
 def avoidSea(angle):
      # Checar si esta centrada
      
-     if angle <= 90:  # sea right
-         # print(" mar derecha")
+     if angle <= 90: #sea right
+          #print(" mar derecha")
           return "SR"
      
      elif angle > 90: #sea left
-          return 'SL'
+          #print("mar izquierda")
+          return "SL"
      
 # Hoop    
 def detectHoop(img):

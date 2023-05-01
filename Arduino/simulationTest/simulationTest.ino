@@ -36,7 +36,9 @@ void loop()
   
   readSerialPort();
   msg.replace("\n", "");
-
+  //IDDLE
+  //Serial.println(msg.lenght());  
+   
   //sea avoid
   if (msg == "S") {
     seaAvoid();
@@ -54,7 +56,7 @@ void loop()
     looking();
   }
   
-  delay(500);
+  delay(50);
   
 }
 
