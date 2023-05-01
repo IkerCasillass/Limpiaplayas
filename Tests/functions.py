@@ -5,6 +5,8 @@ import numpy as np
 import math
 import serial, time 
 
+
+
 # mathematical funtions
 def getAngle(windowSize, point):
      # WindowSize = (h,w)    point = (x,y)
@@ -131,7 +133,57 @@ def get_Cans(img, shape):
                     fX = cX
                     fY = cY
                     #draw all targets
-                    draw_target(img,(h,w),(fX,fY))
+                    #draw_target(img,(h,w),(fX,fY))
+          return (fX,fY), True
+     else:
+          return (-1,-1), False
+
+#Get cans numpy operations
+def get_CansNP(img, shape):
+     h = shape[1]
+     w = shape[0]
+
+     # convert the image to grayscale
+     gray_image = img.copy()
+     gray_image = cv2.cvtColor(gray_image, cv2.COLOR_BGR2GRAY)
+     blur = cv2.GaussianBlur(gray_image,(11,11),cv2.BORDER_DEFAULT)
+
+     # convert the grayscale image to binary image
+     thresh = cv2.threshold(blur,60,250,cv2.THRESH_BINARY_INV)[1]
+     
+     # find contours in the binary image
+     contours = cv2.findContours(thresh,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)[0]
+     
+     D = []
+
+     if contours != []:
+          # create a numpy array to store centroids and distances
+          centroids = np.zeros((len(contours), 2))
+          distances = np.zeros(len(contours))
+          
+          for i, c in enumerate(contours):
+               # calculate moments for each contour
+               M = cv2.moments(c)
+               if M["m00"] != 0:
+                    # calculate x,y coordinate of center
+                    cX = int(M["m10"] / M["m00"])
+                    cY = int(M["m01"] / M["m00"])
+               else:
+                    cX = 0
+                    cY = 0
+               
+               centroids[i] = (cX, cY)
+
+               dist = math.sqrt( (cX - int(w/2))**2 + (cY - h)**2 )
+               distances[i] = dist
+          
+          # find index of minimum distance
+          min_idx = np.argmin(distances)
+          fX, fY = centroids[min_idx]
+
+          #draw all targets
+          #draw_target(img, (h,w), (fX,fY))
+
           return (fX,fY), True
      else:
           return (-1,-1), False
