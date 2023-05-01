@@ -3,7 +3,7 @@
 import cv2
 import numpy as np
 import math
-import functions2 as func# Our own functions file
+import functions as func# Our own functions file
 import serial, time
 def main():
 
@@ -36,7 +36,7 @@ def main():
           ret, frame = vc.read()
 
           if ret == True:
-               keypoints, reversemask = func.detectBlobs(frame, hsv_min_black, hsv_max_black)
+               keypoints, reversemask = func.detectCans(frame, hsv_min_black, hsv_max_black)
                y,xr, res = func.detectSea(frame)
                keypointsc, mask= func.detectBlobs(frame, hsv_min_red, hsv_max_red)
                D = [] # list for distance of blobs

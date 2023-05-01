@@ -12,7 +12,7 @@ def main():
      # Arduino port
      # with serial.Serial("/dev/ttyACM0", 9600, timeout=1) as arduino:
      #arduino = serial.Serial("/dev/ttyACM0", 9600, timeout=1)
-     time.sleep(0.1) #wait for serial to open
+     #time.sleep(0.1) #wait for serial to open
      msg = 'B' #empty message
 
      #Window size
@@ -30,12 +30,11 @@ def main():
 
           ret, frame = vc.read()
           cv2.imshow("image",frame)
-          #vc.set(cv2.CAP_PROP_FPS, 30)
+          
           if ret:
                #IDLE STATE
                #Sea detection
                seaCoordinate, sea = func.detectSea(frame)
-               print(seaCoordinate)
                cv2.imshow("sea", sea)
                # If sea is close enough
                if seaCoordinate[1] > winSize[1]/3:
@@ -53,17 +52,12 @@ def main():
 
                if seaCoordinate == (-1,-1) and canFlag == False:
                     print("looking")
-               #time.sleep(0.2)
 
                hoopCoordinates, hoop = func.detectHoop(frame)
-               cv2.imshow("hoop", hoop)
                if hoopCoordinates != (-1, -1):
-                    print("hoop coordinates ")
-                    print(hoopCoordinates)
                     angleHoop = func.getAngle(winSize, hoopCoordinates)
                     msg = func.centerBlob(angleHoop, "hoop")
                     print("hoop" + msg)
-                        
 
 
           if cv2.waitKey(50) == 27:
