@@ -1,3 +1,6 @@
+# Taken from https://stackoverflow.com/a/59906154/19409752
+
+
 import cv2
 import numpy as np
 
@@ -5,8 +8,8 @@ def nothing(x):
     pass
 
 # image Path
-image = cv2.imread('escenario1.jpeg')
-image = cv2.resize(image, (1000, 800))
+image = cv2.imread('HSVScale.py')
+
 # Create a window
 cv2.namedWindow('image')
 
