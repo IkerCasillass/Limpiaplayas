@@ -114,18 +114,6 @@ def get_Cans(img, shape):
      cans =  cv2.bitwise_and(img, img, mask=closing)
 
      grayimg = cv2.cvtColor(cans, cv2.COLOR_BGR2GRAY)
-     #cans = cv2.threshold(grayimg,20, 250 cv2.TRESH_BINARY_INV)[1]
-     #cv2.imshow("Cans", 255- cans)
-
-     # convert the image to grayscale
-     '''gray_image = img.copy()
-     gray_image = cv2.cvtColor(gray_image, cv2.COLOR_BGR2GRAY)
-     blur = cv2.GaussianBlur(gray_image,(11,11),cv2.BORDER_DEFAULT)
-
-     # convert the grayscale image to binary image
-     thresh = cv2.threshold(blur,20,250,cv2.THRESH_BINARY_INV)[1]
-     
-    # cv2.imshow("cans", thresh)'''
      
      # find contours in the binary image
      contours = cv2.findContours(grayimg,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)[0]
